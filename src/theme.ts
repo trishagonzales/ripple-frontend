@@ -6,10 +6,10 @@ const theme = {
     fg: '#271919',
     fg2: '#a3a3a3',
     bg: '#FFFFFF',
-    bg2: '#e8e8e8'
+    bg2: '#f0f0f0'
   },
 
-  font: 'Poppins, sans-serif'
+  boxShadow: 'box-shadow: 0px 3px 6px lightgrey'
 };
 
 export default theme;

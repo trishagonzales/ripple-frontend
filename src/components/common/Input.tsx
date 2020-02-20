@@ -8,13 +8,15 @@ export const Input = styled.input`
   border: 1px solid ${p => p.theme.color.fg2};
 
   :focus {
-    border-color: ${p => p.theme.color.main};
+    border-color: black;
     outline: none;
   }
 `;
 
 export const InputLabel = styled.label`
+  display: block;
+  margin-top: 1em;
+
   font-size: 14px;
   color: ${p => p.theme.color.fg2};
-  margin-bottom: 0;
 `;

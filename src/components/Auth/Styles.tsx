@@ -1,11 +1,13 @@
 import styled from 'styled-components';
 
 export const Div = styled.div`
+  max-width: 550px;
   margin: auto;
+  margin-top: 20px;
   padding: 2em;
 
   background: white;
-  ${p => p.theme.boxShadow};
+  ${p => p.theme.boxShadow}
 
   h1 {
     text-align: center;
@@ -19,13 +21,5 @@ export const Div = styled.div`
       flex: 1;
       padding: 0.7em 1.2em;
     }
-  }
-
-  @media (max-width: 500px) {
-    width: 100%;
-  }
-
-  @media (min-width: 500px) {
-    max-width: 550px;
   }
 `;

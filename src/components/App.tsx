@@ -4,6 +4,7 @@ import { UserProvider } from '../providers';
 import userReducer from '../reducers/user.reducer';
 
 import { GlobalStyle } from './Styles';
+import Navbar from './Navbar/Navbar';
 import Login from './Auth/Login';
 import Signup from './Auth/Signup';
 import Home from './Home/Home';
@@ -15,6 +16,7 @@ function App() {
   return (
     <UserProvider value={{ user, dispatch }}>
       <GlobalStyle />
+      <Navbar />
       {user ? (
         <Switch>
           <Route path='/feed' component={Feed} />

@@ -9,7 +9,7 @@ const theme = {
     bg2: '#f0f0f0'
   },
 
-  boxShadow: 'box-shadow: 0px 3px 6px lightgrey'
+  boxShadow: 'box-shadow: 0px 3px 6px lightgrey;'
 };
 
 export default theme;

@@ -5,7 +5,7 @@ export interface ButtonProps {
 }
 
 const Button = styled.button<ButtonProps>`
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: ${p => (p.primary ? 'white' : p.theme.color.main)};
   background: ${p => (p.primary ? p.theme.color.main : 'none')};
@@ -13,7 +13,7 @@ const Button = styled.button<ButtonProps>`
   outline: none;
   cursor: pointer;
 
-  padding: 0.6em 1.2em;
+  padding: 0.5em 1em;
   margin: 0.2em;
 
   :hover {

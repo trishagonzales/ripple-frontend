@@ -17,7 +17,7 @@ export const Div = styled.div`
 
     button {
       flex: 1;
-      padding: 0.8em 1.2em;
+      padding: 0.7em 1.2em;
     }
   }
 

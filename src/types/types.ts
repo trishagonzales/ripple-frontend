@@ -23,4 +23,5 @@ export interface Post {
   author: string;
   dateCreated: string;
   lastModified?: string;
+  likes: string[];
 }

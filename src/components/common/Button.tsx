@@ -9,7 +9,7 @@ const Button = styled.button<ButtonProps>`
   font-weight: 600;
   color: ${p => (p.primary ? 'white' : p.theme.color.main)};
   background: ${p => (p.primary ? p.theme.color.main : 'none')};
-  border: none;
+  border: 3px solid ${p => (p.primary ? p.theme.color.main : p.theme.color.bg2)};
   outline: none;
   cursor: pointer;
 

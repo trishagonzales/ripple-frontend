@@ -1,0 +1,15 @@
+login/signup
+navbar
+feed
+sidebar
+newpost
+mypost
+profile
+settings
+likedposts
+
+react memo
+error boundary
+loading component
+error component
+homepage

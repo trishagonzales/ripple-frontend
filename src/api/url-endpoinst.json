@@ -1,0 +1,6 @@
+{
+  "auth": "/auth",
+  "users": "/users",
+  "profiles": "/profiles",
+  "posts": "/posts"
+}

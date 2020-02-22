@@ -1,7 +1,8 @@
 import styled from 'styled-components';
+import { device, size } from '../AppStyles';
 
 export const Div = styled.div`
-  max-width: 550px;
+  max-width: ${size.phone};
   margin: auto;
   margin-top: 20px;
   padding: 2em;
@@ -20,6 +21,10 @@ export const Div = styled.div`
     button {
       flex: 1;
       padding: 0.7em 1.2em;
+    }
+
+    @media ${device.phoneS} {
+      flex-direction: column;
     }
   }
 `;

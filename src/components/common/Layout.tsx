@@ -21,5 +21,5 @@ export const Center = styled.div`
 `;
 
 export const Grid = styled.div<{ name: string }>`
-  grid: ${p => p.name};
+  grid-area: ${p => p.name};
 `;

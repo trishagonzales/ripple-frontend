@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import * as yup from 'yup';
+import PulseLoader from 'react-spinners/PulseLoader';
+import theme from '../../theme';
+import { GlobalStateContext } from '../../providers';
+import useAPI from '../../hooks/useAPI';
+import url from '../../api/url-endpoinst.json';
 
-import { Div } from './Styles';
+import { Div } from './AuthStyles';
 import { H1, Text } from '../common/Typography';
+import { Center } from '../common/Layout';
 import { Input, InputLabel } from '../common/Input';
 import Button from '../common/Button';
 
@@ -33,15 +39,23 @@ const signupSchema = yup.object().shape({
 });
 
 const Signup = () => {
+  const { res, isLoading, callAPI } = useAPI();
+  const { dispatch } = useContext(GlobalStateContext);
   let history = useHistory();
+
+  if (res) dispatch({ type: 'login', payload: res.data });
 
   return (
     <Div>
       <H1>SIGNUP</H1>
+      <Center>
+        <PulseLoader loading={isLoading} color={theme.color.main} size={12} />
+      </Center>
+
       <Formik
         initialValues={{ firstName: '', lastName: '', email: '', password: '' }}
         validationSchema={signupSchema}
-        onSubmit={values => {}}
+        onSubmit={values => callAPI({ method: 'POST', url: url.users, data: values })}
       >
         {({ errors, touched }) => (
           <Form>

@@ -20,8 +20,23 @@ export interface Post {
   _id: string;
   title: string;
   body: string;
-  author: string;
+  author: {
+    profile: {
+      firstName: string;
+      lastName: string;
+    };
+  };
   dateCreated: string;
   lastModified?: string;
   likes: string[];
+}
+
+export interface GlobalState {
+  user: null | User;
+  navMenu: boolean;
+}
+
+export interface GlobalStateActions {
+  type: 'toggle-navmenu' | 'login' | 'logout' | 'get-user-data';
+  payload?: any;
 }

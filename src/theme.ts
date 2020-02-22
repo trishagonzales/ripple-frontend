@@ -1,4 +1,4 @@
-export type Theme = typeof theme;
+export type ThemeType = typeof theme;
 
 const theme = {
   color: {

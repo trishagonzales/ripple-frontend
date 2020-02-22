@@ -1,21 +1,46 @@
 import React, { useContext } from 'react';
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-import { UserContext } from '../../providers';
+import { Link, NavLink } from 'react-router-dom';
+import { GlobalStateContext } from '../../providers';
+import { deleteJwt } from '../../api/auth.api';
 
+import { Nav, Div, Menu, Burger } from './NavbarStyles';
 import Button from '../common/Button';
-import { Text } from '../common/Typography';
 
 const Navbar = () => {
-  const { user } = useContext(UserContext);
+  const {
+    globalState: { user, navMenu },
+    dispatch
+  } = useContext(GlobalStateContext);
 
   const menu = user ? (
-    <Link to='/new-post'>
-      <Button primary>NEW POST</Button>
-    </Link>
+    <>
+      <Menu open={navMenu}>
+        <i
+          className='fa fa-close fa-2x close-btn'
+          onClick={() => dispatch({ type: 'toggle-navmenu' })}
+        ></i>
+        <NavLink to='/feed'>FEED</NavLink>
+        <NavLink to='/my-posts'>MY POSTS</NavLink>
+        <NavLink to='/liked-posts'>LIKED POSTS</NavLink>
+        <NavLink to='/profile'>PROFILE</NavLink>
+        <NavLink to='/settings'>SETTINGS</NavLink>
+        <NavLink
+          to='/logout'
+          onClick={() => {
+            deleteJwt();
+            dispatch({ type: 'logout' });
+          }}
+        >
+          LOGOUT
+        </NavLink>
+      </Menu>
+      <Link to='/new-post' className='newpost-btn'>
+        <Button primary>NEW POST</Button>
+      </Link>
+    </>
   ) : (
     <>
-      <Link to='/login'>
+      <Link to='/login' className='login-btn'>
         <Button>LOGIN</Button>
       </Link>
       <Link to='/signup'>
@@ -27,37 +52,18 @@ const Navbar = () => {
   return (
     <Nav>
       <Div>
-        <Link to='/'>
-          <Brand>RIPPLE</Brand>
+        <Burger user={user} onClick={() => dispatch({ type: 'toggle-navmenu' })}>
+          <div></div>
+          <div></div>
+          <div></div>
+        </Burger>
+        <Link to='/' className='brand'>
+          RIPPLE
         </Link>
-        <Menu>{menu}</Menu>
+        {menu}
       </Div>
     </Nav>
   );
 };
 
 export default Navbar;
-
-const Nav = styled.nav`
-  padding: 0.4em 1.2em;
-  background: white;
-  ${p => p.theme.boxShadow}
-`;
-
-const Div = styled.div`
-  display: flex;
-  align-items: center;
-  max-width: 1000px;
-  margin: auto;
-`;
-
-const Brand = styled(Text)`
-  font-size: 28px;
-  font-weight: 700;
-  color: ${p => p.theme.color.main};
-  margin: 0;
-`;
-
-const Menu = styled.div`
-  margin-left: auto;
-`;

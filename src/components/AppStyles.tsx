@@ -1,8 +1,8 @@
 import { createGlobalStyle } from 'styled-components';
-import { Theme } from '../theme';
+import { ThemeType } from '../theme';
 
 interface Props {
-  theme: Theme;
+  theme: ThemeType;
 }
 
 export const GlobalStyle = createGlobalStyle<Props>`
@@ -27,3 +27,18 @@ export const GlobalStyle = createGlobalStyle<Props>`
     }
   }
 `;
+
+export const size = {
+  phone: '550px',
+  tablet: '768px',
+  desktop: '1024px',
+  desktopL: '1440px'
+};
+
+export const device = {
+  phoneS: `(max-width: ${size.phone})`,
+  phoneL: `(min-width: ${size.phone})`,
+  tablet: `(min-width: ${size.tablet})`,
+  desktop: `(min-width: ${size.desktop})`,
+  desktopL: `(min-width: ${size.desktopL})`
+};

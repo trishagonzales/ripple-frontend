@@ -7,7 +7,7 @@ export interface Context {
 }
 
 export const initialGlobalState = {
-  user: 'q',
+  user: null,
   navMenu: false
 };
 

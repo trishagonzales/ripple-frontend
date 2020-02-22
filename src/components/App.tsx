@@ -15,17 +15,25 @@ function App() {
   const [globalState, dispatch] = useReducer(globalStateReducer, initialGlobalState);
 
   return (
-    <ToastProvider placement='top-center' autoDismiss={true} transitionDuration={100}>
+    <ToastProvider
+      placement='top-center'
+      autoDismiss={true}
+      autoDismissTimeout={4000}
+      transitionDuration={100}
+    >
       <GlobalStateProvider value={{ globalState, dispatch }}>
         <GlobalStyle />
         <Navbar />
         {globalState.user ? (
-          <Switch></Switch>
+          <Switch>
+            <Route path='/feed' component={Feed} />
+          </Switch>
         ) : (
           <Switch>
             <Route path='/feed' component={Feed} />
             <Route path='/login' component={Login} />
             <Route path='/signup' component={Signup} />
+            <Route path='/logout' component={Home} />
             <Route path='/' exact component={Home} />
           </Switch>
         )}

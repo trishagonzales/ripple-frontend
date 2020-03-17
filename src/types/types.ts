@@ -1,13 +1,14 @@
 export interface User {
   _id: string;
   email: string;
-  profile: Profile;
+  profile: ProfileType;
   posts?: Post[];
   likedPosts?: Post[];
 }
 
-export interface Profile {
-  _id: string;
+export interface ProfileType {
+  _id?: string;
+  avatar?: string;
   firstName: string;
   lastName: string;
   gender?: string;
@@ -18,10 +19,12 @@ export interface Profile {
 
 export interface Post {
   _id: string;
+  image?: string;
   title: string;
   body: string;
   author: {
     profile: {
+      avatar?: Blob | string;
       firstName: string;
       lastName: string;
     };
@@ -29,14 +32,4 @@ export interface Post {
   dateCreated: string;
   lastModified?: string;
   likes: string[];
-}
-
-export interface GlobalState {
-  user: null | User;
-  navMenu: boolean;
-}
-
-export interface GlobalStateActions {
-  type: 'toggle-navmenu' | 'login' | 'logout' | 'get-user-data';
-  payload?: any;
 }

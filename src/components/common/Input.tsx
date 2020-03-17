@@ -20,3 +20,18 @@ export const InputLabel = styled.label`
   font-size: 14px;
   color: ${p => p.theme.color.fg2};
 `;
+
+export const Textarea = styled.textarea`
+  width: 100%;
+  margin: 0.7em 0;
+  padding: 1.2rem;
+
+  font-family: Poppins, sans-serif;
+  color: ${p => p.theme.color.fg};
+  border: 1px solid ${p => p.theme.color.fg2};
+  resize: none;
+
+  :focus {
+    outline: none;
+  }
+`;

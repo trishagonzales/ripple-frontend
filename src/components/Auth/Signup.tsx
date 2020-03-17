@@ -4,15 +4,16 @@ import { Formik, Form, Field } from 'formik';
 import * as yup from 'yup';
 import PulseLoader from 'react-spinners/PulseLoader';
 import theme from '../../theme';
-import { GlobalStateContext } from '../../providers';
+import { GlobalContext } from '../../providers';
 import useAPI from '../../hooks/useAPI';
-import url from '../../api/url-endpoinst.json';
+import url from '../../api/endpoints.json';
 
-import { Div } from './AuthStyles';
+import { Div, AuthContainer } from './AuthStyles';
 import { H1, Text } from '../common/Typography';
-import { Center } from '../common/Layout';
+import { HorizontalCenter } from '../common/Layout';
 import { Input, InputLabel } from '../common/Input';
 import Button from '../common/Button';
+import { storeJwt } from '../../api/auth.api';
 
 const signupSchema = yup.object().shape({
   firstName: yup
@@ -40,52 +41,58 @@ const signupSchema = yup.object().shape({
 
 const Signup = () => {
   const { res, isLoading, callAPI } = useAPI();
-  const { dispatch } = useContext(GlobalStateContext);
+  const { dispatch } = useContext(GlobalContext);
   let history = useHistory();
 
-  if (res) dispatch({ type: 'login', payload: res.data });
+  if (res && !isLoading) {
+    storeJwt(res.headers['x-auth-token']);
+    dispatch({ type: 'login', payload: res.data });
+    history.push('/feed');
+  }
 
   return (
     <Div>
-      <H1>SIGNUP</H1>
-      <Center>
-        <PulseLoader loading={isLoading} color={theme.color.main} size={12} />
-      </Center>
+      <AuthContainer>
+        <H1>SIGNUP</H1>
+        <HorizontalCenter>
+          <PulseLoader loading={isLoading} color={theme.color.main} size={12} />
+        </HorizontalCenter>
 
-      <Formik
-        initialValues={{ firstName: '', lastName: '', email: '', password: '' }}
-        validationSchema={signupSchema}
-        onSubmit={values => callAPI({ method: 'POST', url: url.users, data: values })}
-      >
-        {({ errors, touched }) => (
-          <Form>
-            <InputLabel htmlFor='firstName'>First Name</InputLabel>
-            <Field name='firstName' id='firstName' type='firstName' as={Input} />
-            {errors.firstName && touched.firstName ? <Text error>{errors.firstName}</Text> : null}
+        <Formik
+          initialValues={{ firstName: '', lastName: '', email: '', password: '' }}
+          validationSchema={signupSchema}
+          onSubmit={values => callAPI({ method: 'POST', url: url.users, data: values })}
+        >
+          {({ errors, touched }) => (
+            <Form>
+              <InputLabel htmlFor='firstName'>First Name</InputLabel>
+              <Field name='firstName' id='firstName' type='firstName' as={Input} />
+              {errors.firstName && touched.firstName ? <Text error>{errors.firstName}</Text> : null}
 
-            <InputLabel htmlFor='lastName'>Last Name</InputLabel>
-            <Field name='lastName' id='lastName' type='lastName' as={Input} />
-            {errors.lastName && touched.lastName ? <Text error>{errors.lastName}</Text> : null}
+              <InputLabel htmlFor='lastName'>Last Name</InputLabel>
+              <Field name='lastName' id='lastName' type='lastName' as={Input} />
+              {errors.lastName && touched.lastName ? <Text error>{errors.lastName}</Text> : null}
 
-            <InputLabel htmlFor='email'>Email</InputLabel>
-            <Field name='email' id='email' type='email' as={Input} />
-            {errors.email && touched.email ? <Text error>{errors.email}</Text> : null}
+              <InputLabel htmlFor='email'>Email</InputLabel>
+              <Field name='email' id='email' type='email' as={Input} />
+              {errors.email && touched.email ? <Text error>{errors.email}</Text> : null}
 
-            <InputLabel htmlFor='password'>Password</InputLabel>
-            <Field name='password' id='password' type='password' as={Input} />
-            {errors.password && touched.password ? <Text error>{errors.password}</Text> : null}
+              <InputLabel htmlFor='password'>Password</InputLabel>
+              <Field name='password' id='password' type='password' as={Input} />
+              {errors.password && touched.password ? <Text error>{errors.password}</Text> : null}
 
-            <div className='form-buttons'>
-              <Button type='button' onClick={() => history.push('/')}>
-                CANCEL
-              </Button>
-              <Button type='submit' primary>
-                SUBMIT
-              </Button>
-            </div>
-          </Form>
-        )}
-      </Formik>
+              <div className='form-buttons'>
+                <Button type='button' onClick={() => history.push('/')}>
+                  CANCEL
+                </Button>
+                <Button type='submit' primary>
+                  SUBMIT
+                </Button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </AuthContainer>
     </Div>
   );
 };

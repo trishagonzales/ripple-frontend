@@ -25,9 +25,20 @@ export const GlobalStyle = createGlobalStyle<Props>`
     li {
       list-style-type: none;
     }
+    
+    input, textarea, button {
+      :focus {
+        outline: none;
+      }
+    }
+
+    h1 {
+      margin-bottom: 1rem;
+    }
   }
 `;
 
+//  MEDIA QUERY BREAKPOINTS
 export const size = {
   phone: '550px',
   tablet: '768px',

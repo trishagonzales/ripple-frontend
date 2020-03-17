@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { GlobalStateContext } from '../../providers';
+import { GlobalContext } from '../../providers';
 import { deleteJwt } from '../../api/auth.api';
 
 import { Nav, Div, Menu, Burger } from './NavbarStyles';
@@ -8,9 +8,9 @@ import Button from '../common/Button';
 
 const Navbar = () => {
   const {
-    globalState: { user, navMenu },
+    global: { user, navMenu },
     dispatch
-  } = useContext(GlobalStateContext);
+  } = useContext(GlobalContext);
 
   const menu = user ? (
     <>
@@ -22,14 +22,15 @@ const Navbar = () => {
         <NavLink to='/feed'>FEED</NavLink>
         <NavLink to='/my-posts'>MY POSTS</NavLink>
         <NavLink to='/liked-posts'>LIKED POSTS</NavLink>
-        <NavLink to='/profile'>PROFILE</NavLink>
+        <NavLink to={`/profile/${user._id}`}>PROFILE</NavLink>
         <NavLink to='/settings'>SETTINGS</NavLink>
         <NavLink
-          to='/logout'
+          to='/'
           onClick={() => {
             deleteJwt();
             dispatch({ type: 'logout' });
           }}
+          activeClassName='logout'
         >
           LOGOUT
         </NavLink>

@@ -1,24 +1,22 @@
 import { useState } from 'react';
 import { useToasts } from 'react-toast-notifications';
+import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import http from '../api/http.api';
-
-export interface UseAPIParams {
-  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-  url: string;
-  data: any;
-}
+import { deleteJwt } from '../api/auth.api';
 
 export default function useAPI() {
-  const [res, setRes] = useState();
+  const [res, setRes] = useState<AxiosResponse | null>();
   const [isLoading, setLoading] = useState(false);
   const { addToast } = useToasts();
 
-  async function callAPI(params: UseAPIParams) {
+  async function callAPI(params: AxiosRequestConfig) {
     try {
       setLoading(true);
       const res = await http(params);
       setRes(res);
     } catch (e) {
+      if (params.method === 'GET' && params.url === '/users/me') deleteJwt();
+
       return e.response
         ? addToast(e.response.data, { appearance: 'error' })
         : addToast('Unexpected error occurred.', { appearance: 'error' });
@@ -27,5 +25,5 @@ export default function useAPI() {
     }
   }
 
-  return { res, isLoading, callAPI };
+  return { res, setRes, isLoading, callAPI };
 }

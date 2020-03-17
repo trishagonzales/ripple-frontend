@@ -3,15 +3,16 @@ import styled from 'styled-components';
 import moment from 'moment';
 import { Post } from '../../types/types';
 
-import { Grid } from '../common/Layout';
 import { Text } from '../common/Typography';
 import Button from '../common/Button';
 
 export interface PostCardProps {
   variant: 'feed' | 'mypost';
   post: Post;
+  image?: string;
+  avatar?: string;
 }
-const PostCard: React.FC<PostCardProps> = ({ variant, post }) => {
+const PostCard: React.FC<PostCardProps> = ({ variant, post, image, avatar }) => {
   const {
     title,
     author: {
@@ -25,20 +26,18 @@ const PostCard: React.FC<PostCardProps> = ({ variant, post }) => {
 
   return (
     <Div>
-      <Grid name='thumbnail' className='thumbnail'>
-        <div style={{ backgroundColor: 'lightgrey', width: '100%', height: '100%' }}></div>
-      </Grid>
-      <Grid name='title' className='title'>
+      <div className='image'></div>
+      <div className='title'>
         <Text>{title}</Text>
-      </Grid>
-      <Grid name='author' className='author'>
+      </div>
+      <div className='author'>
         <Text>{firstName + ' ' + lastName}</Text>
-      </Grid>
-      <Grid name='date' className='date'>
+      </div>
+      <div className='date'>
         <Text secondary>{date}</Text>
-      </Grid>
+      </div>
 
-      <Grid name='buttons' className='buttons'>
+      <div className='buttons'>
         {variant === 'feed' ? (
           <Button>LIKE</Button>
         ) : (
@@ -47,7 +46,7 @@ const PostCard: React.FC<PostCardProps> = ({ variant, post }) => {
             <Button>DELETE</Button>
           </>
         )}
-      </Grid>
+      </div>
     </Div>
   );
 };
@@ -64,12 +63,20 @@ const Div = styled.div`
   grid-template-columns: 60px 150px 190px;
   grid-template-rows: 200px auto auto auto;
   grid-template-areas:
-    'thumbnail thumbnail thumbnail'
+    'image image image'
     'title title title '
     '. author buttons'
     '. date buttons';
 
+  .image {
+    grid-area: image;
+    width: 100%;
+    height: 100%;
+    background: lightgrey;
+  }
+
   .title {
+    grid-area: title;
     padding: 3%;
     p {
       font-size: 1.2rem;
@@ -78,12 +85,14 @@ const Div = styled.div`
   }
 
   .date {
+    grid-area: date;
     p {
       font-size: 0.9rem;
     }
   }
 
   .buttons {
+    grid-area: buttons;
     padding: 0 4% 4% 0;
     justify-self: end;
   }

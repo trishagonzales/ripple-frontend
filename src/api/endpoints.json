@@ -2,5 +2,6 @@
   "auth": "/auth",
   "users": "/users",
   "profiles": "/profiles",
-  "posts": "/posts"
+  "posts": "/posts",
+  "uploads": "/uploads"
 }

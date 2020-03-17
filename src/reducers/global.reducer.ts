@@ -1,6 +1,16 @@
-import { GlobalState, GlobalStateActions } from '../types/types';
+import { User } from '../types/types';
 
-export default function globalStateReducer(state: GlobalState, action: GlobalStateActions) {
+export interface GlobalState {
+  user: null | User;
+  navMenu: boolean;
+}
+
+export interface GlobalStateActions {
+  type: 'toggle-navmenu' | 'login' | 'logout' | 'get-user-data';
+  payload?: any;
+}
+
+export default function globalReducer(state: GlobalState, action: GlobalStateActions) {
   switch (action.type) {
     case 'toggle-navmenu':
       return {

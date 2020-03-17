@@ -1,22 +1,11 @@
 import styled from 'styled-components';
-import { device, size } from '../AppStyles';
+import { Container } from '../common/Layout';
+import { device } from '../AppStyles';
 
 export const Div = styled.div`
-  max-width: ${size.phone};
-  margin: auto;
-  margin-top: 20px;
-  padding: 2em;
-
-  background: white;
-  ${p => p.theme.boxShadow}
-
-  h1 {
-    text-align: center;
-  }
-
   .form-buttons {
+    margin-top: auto;
     display: flex;
-    margin-top: 1.5em;
 
     button {
       flex: 1;
@@ -26,5 +15,21 @@ export const Div = styled.div`
     @media ${device.phoneS} {
       flex-direction: column;
     }
+  }
+`;
+
+export const AuthContainer = styled(Container)`
+  min-height: 85vh;
+  display: flex;
+  flex-direction: column;
+
+  h1 {
+    text-align: center;
+  }
+
+  form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 `;

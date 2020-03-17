@@ -38,7 +38,8 @@ export const Menu = styled.div<{ open: boolean }>`
     display: none;
   }
 
-  a {
+  a,
+  .logout {
     padding: 0.5em 0.6em;
     color: ${p => p.theme.color.fg2};
     :hover {
@@ -57,7 +58,6 @@ export const Menu = styled.div<{ open: boolean }>`
     left: 0;
     bottom: 0;
 
-    width: 70vw;
     height: 100vh;
     background: white;
 
@@ -70,6 +70,7 @@ export const Menu = styled.div<{ open: boolean }>`
 
     a {
       margin: 0.2em 1.5em;
+      font-size: 1.2rem;
     }
   }
 `;

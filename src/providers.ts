@@ -1,16 +1,16 @@
 import React, { createContext } from 'react';
-import { GlobalState, GlobalStateActions } from './types/types';
+import { GlobalState, GlobalStateActions } from './reducers/global.reducer';
 
 export interface Context {
-  globalState: GlobalState;
+  global: GlobalState;
   dispatch: React.Dispatch<GlobalStateActions>;
 }
 
-export const initialGlobalState = {
+export const initialGlobal = {
   user: null,
   navMenu: false
 };
 
-export const GlobalStateContext = createContext({} as Context);
+export const GlobalContext = createContext({} as Context);
 
-export const GlobalStateProvider = GlobalStateContext.Provider;
+export const GlobalProvider = GlobalContext.Provider;

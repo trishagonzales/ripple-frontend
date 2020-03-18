@@ -13,7 +13,7 @@ import PostCard from '../Post/PostCard';
 
 const Feed = () => {
   const posts = useFetch<Post[]>(url.posts);
-  let imageURL: { [x: string]: string };
+  let imageURL: any = useRef();
 
   useEffect(() => {
     if (posts.data) {
@@ -21,7 +21,8 @@ const Feed = () => {
 
       images.forEach(img =>
         http(`${url.uploads}/image/${img}`, { responseType: 'blob' }).then(res => {
-          if (img) imageURL[img] = URL.createObjectURL(res.data);
+          console.log(res);
+          if (img) imageURL.current[img] = URL.createObjectURL(res.data);
         })
       );
     }

@@ -1,99 +1,62 @@
 import React from 'react';
 import styled from 'styled-components';
-import moment from 'moment';
 import { Post } from '../../types/types';
 
-import { Text } from '../common/Typography';
-import Button from '../common/Button';
+import { Text, H2 } from '../common/Typography';
 
 export interface PostCardProps {
   variant: 'feed' | 'mypost';
   post: Post;
-  image?: string;
-  avatar?: string;
+  imgURL?: string;
+  avatarURL?: string;
 }
-const PostCard: React.FC<PostCardProps> = ({ variant, post, image, avatar }) => {
-  const {
-    title,
-    author: {
-      profile: { firstName, lastName }
-    },
-    dateCreated,
-    lastModified
-  } = post;
 
-  const date = moment(lastModified ? lastModified : dateCreated).format('ll');
+const PostCard: React.FC<PostCardProps> = ({ variant, post, imgURL, avatarURL }) => {
+  const { _id, title, author, lastModified, dateCreated } = post;
 
   return (
     <Div>
-      <div className='image'></div>
-      <div className='title'>
-        <Text>{title}</Text>
-      </div>
-      <div className='author'>
-        <Text>{firstName + ' ' + lastName}</Text>
-      </div>
-      <div className='date'>
-        <Text secondary>{date}</Text>
-      </div>
-
-      <div className='buttons'>
-        {variant === 'feed' ? (
-          <Button>LIKE</Button>
-        ) : (
-          <>
-            <Button>EDIT</Button>
-            <Button>DELETE</Button>
-          </>
-        )}
-      </div>
+      {variant === 'feed' ? (
+        <FeedCard className='card'>
+          <div className='image'>
+            <img src={imgURL} alt='post' />
+          </div>
+          <div className='title'>
+            <H2>{title}</H2>
+          </div>
+          <div className='avatar'>
+            <img src={avatarURL} alt='author' />
+          </div>
+          <div className='author'>
+            <Text>{author.profile.firstName + ' ' + author.profile.lastName}</Text>
+          </div>
+          <div className='date'>
+            <Text>{lastModified ? lastModified : dateCreated}</Text>
+          </div>
+          <div className='buttons'>
+            <i className='far fa-heart'></i>
+          </div>
+        </FeedCard>
+      ) : (
+        <MyPostCard className='card'></MyPostCard>
+      )}
     </Div>
   );
 };
 
 export default PostCard;
 
-const Div = styled.div`
-  width: 400px;
-  margin: 1em 0.8em;
-  background: white;
-  ${p => p.theme.boxShadow}
-
-  display: grid;
-  grid-template-columns: 60px 150px 190px;
-  grid-template-rows: 200px auto auto auto;
-  grid-template-areas:
-    'image image image'
-    'title title title '
-    '. author buttons'
-    '. date buttons';
-
-  .image {
-    grid-area: image;
-    width: 100%;
-    height: 100%;
-    background: lightgrey;
-  }
-
-  .title {
-    grid-area: title;
-    padding: 3%;
-    p {
-      font-size: 1.2rem;
-      font-weight: 600;
-    }
-  }
-
-  .date {
-    grid-area: date;
-    p {
-      font-size: 0.9rem;
-    }
-  }
-
-  .buttons {
-    grid-area: buttons;
-    padding: 0 4% 4% 0;
-    justify-self: end;
+export const Div = styled.div`
+  .card {
+    ${p => p.theme.boxShadow};
+    width: 300px;
+    display: grid;
+    grid-template-columns: 60px 1fr 15% 15%;
+    grid-template-rows: 50% auto auto auto;
+    grid-template-areas: '';
   }
 `;
+
+export const FeedCard = styled.div``;
+
+export const MyPostCard = styled.div``;

@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import { useToasts } from 'react-toast-notifications';
 import PulseLoader from 'react-spinners/PulseLoader';
+import useAPIError from '../../hooks/useAPIError';
 import theme from '../../theme';
 import url from '../../api/endpoints.json';
 import http from '../../api/http.api';
@@ -17,6 +18,7 @@ const NewPost = () => {
   const [loading, setLoading] = useState(false);
   const { addToast } = useToasts();
   let history = useHistory();
+  const onError = useAPIError();
 
   const handleSubmit = async (values: { title: string; body: string }) => {
     try {
@@ -41,11 +43,7 @@ const NewPost = () => {
 
       addToast('Successfully created new post.', { appearance: 'success' });
     } catch (e) {
-      return e.response &&
-        (e.response.headers['Content-Type'] === 'application/json' ||
-          e.response.headers['Content-Type'] === 'text/*')
-        ? addToast(e.response.data, { appearance: 'error' })
-        : addToast('Unexpected error occurred.', { appearance: 'error' });
+      onError(e);
     } finally {
       setLoading(false);
     }

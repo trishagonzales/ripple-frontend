@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as yup from 'yup';
 import PulseLoader from 'react-spinners/PulseLoader';
 import theme from '../../theme';
@@ -52,17 +52,19 @@ const Login: React.FC = () => {
         <Formik
           initialValues={{ email: '', password: '' }}
           validationSchema={loginSchema}
-          onSubmit={values => callAPI({ method: 'POST', url: url.auth, data: values })}
+          validateOnBlur={false}
+          validateOnChange={false}
+          onSubmit={(values) => callAPI({ method: 'POST', url: url.auth, data: values })}
         >
-          {({ errors, touched }) => (
+          {() => (
             <Form>
               <InputLabel htmlFor='email'>Email</InputLabel>
               <Field name='email' type='email' as={Input} />
-              {errors.email && touched.email ? <Text error>{errors.email}</Text> : null}
+              <ErrorMessage name='email' render={(e) => <Text error>{e}</Text>} />
 
               <InputLabel htmlFor='password'>Password</InputLabel>
               <Field name='password' type='password' as={Input} />
-              {errors.password && touched.password ? <Text error>{errors.password}</Text> : null}
+              <ErrorMessage name='password' render={(e) => <Text error>{e}</Text>} />
 
               <div className='form-buttons'>
                 <Button type='button' onClick={() => history.push('/')}>

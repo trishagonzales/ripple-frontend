@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+// import { useHistory } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import PulseLoader from 'react-spinners/PulseLoader';
 import useAPI from '../../hooks/useAPI';
@@ -13,6 +14,7 @@ import { Input, Textarea } from '../common/Input';
 import Button from '../common/Button';
 
 export interface EditProfileProps {
+  id: string | undefined;
   data: ProfileType | undefined;
   imgURL: string;
   setEditting: React.Dispatch<boolean>;
@@ -20,11 +22,16 @@ export interface EditProfileProps {
 
 const EditProfile: React.FC<EditProfileProps> = ({ data, imgURL, setEditting }) => {
   const [{ file, fileURL }, setFile] = useState({ file: '', fileURL: imgURL });
+  // let history = useHistory();
 
   const profile = useAPI();
   const image = useAPI();
 
-  const handleSubmit = (values: any) => {
+  useEffect(() => {
+    if (profile.res && image.res && image.res.status === 200) return setEditting(false);
+  }, [image.res, profile.res]);
+
+  const handleSubmit = (values: ProfileType) => {
     profile.callAPI({
       method: 'PUT',
       url: url.profiles + '/me',
@@ -38,12 +45,13 @@ const EditProfile: React.FC<EditProfileProps> = ({ data, imgURL, setEditting }) 
       image.callAPI({
         method: 'PUT',
         url: url.uploads + '/avatar',
-        data: form
+        data: form,
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       });
     }
   };
-
-  if (profile.res?.statusText === 'OK' && image.res?.statusText === 'OK') setEditting(false);
 
   return (
     <Div>
@@ -66,7 +74,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ data, imgURL, setEditting }) 
             bio: data?.bio,
             location: data?.location
           }}
-          onSubmit={values => handleSubmit(values)}
+          onSubmit={(values) => handleSubmit(values)}
         >
           {() => (
             <Form>
@@ -141,7 +149,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ data, imgURL, setEditting }) 
               </div>
 
               <Button type='submit' primary>
-                SUBMIT
+                SAVE
               </Button>
             </Form>
           )}

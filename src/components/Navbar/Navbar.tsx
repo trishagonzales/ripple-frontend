@@ -15,10 +15,7 @@ const Navbar = () => {
   const menu = user ? (
     <>
       <Menu open={navMenu}>
-        <i
-          className='fa fa-close fa-2x close-btn'
-          onClick={() => dispatch({ type: 'toggle-navmenu' })}
-        ></i>
+        <i className='fa fa-close fa-2x close-btn' onClick={() => dispatch({ type: 'toggle-navmenu' })}></i>
         <NavLink to='/feed'>FEED</NavLink>
         <NavLink to='/my-posts'>MY POSTS</NavLink>
         <NavLink to='/liked-posts'>LIKED POSTS</NavLink>

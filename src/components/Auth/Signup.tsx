@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as yup from 'yup';
 import PulseLoader from 'react-spinners/PulseLoader';
 import theme from '../../theme';
@@ -61,25 +61,27 @@ const Signup = () => {
         <Formik
           initialValues={{ firstName: '', lastName: '', email: '', password: '' }}
           validationSchema={signupSchema}
-          onSubmit={values => callAPI({ method: 'POST', url: url.users, data: values })}
+          validateOnBlur={false}
+          validateOnChange={false}
+          onSubmit={(values) => callAPI({ method: 'POST', url: url.users, data: values })}
         >
-          {({ errors, touched }) => (
+          {({ errors }) => (
             <Form>
               <InputLabel htmlFor='firstName'>First Name</InputLabel>
               <Field name='firstName' id='firstName' type='firstName' as={Input} />
-              {errors.firstName && touched.firstName ? <Text error>{errors.firstName}</Text> : null}
+              <ErrorMessage name='firstName' render={(e) => <Text error>{e}</Text>} />
 
               <InputLabel htmlFor='lastName'>Last Name</InputLabel>
               <Field name='lastName' id='lastName' type='lastName' as={Input} />
-              {errors.lastName && touched.lastName ? <Text error>{errors.lastName}</Text> : null}
+              <ErrorMessage name='lastName' render={(e) => <Text error>{e}</Text>} />
 
               <InputLabel htmlFor='email'>Email</InputLabel>
               <Field name='email' id='email' type='email' as={Input} />
-              {errors.email && touched.email ? <Text error>{errors.email}</Text> : null}
+              <ErrorMessage name='email' render={(e) => <Text error>{e}</Text>} />
 
               <InputLabel htmlFor='password'>Password</InputLabel>
               <Field name='password' id='password' type='password' as={Input} />
-              {errors.password && touched.password ? <Text error>{errors.password}</Text> : null}
+              <ErrorMessage name='password' render={(e) => <Text error>{e}</Text>} />
 
               <div className='form-buttons'>
                 <Button type='button' onClick={() => history.push('/')}>

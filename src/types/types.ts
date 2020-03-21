@@ -9,8 +9,8 @@ export interface User {
 export interface ProfileType {
   _id?: string;
   avatar?: string;
-  firstName: string;
-  lastName: string;
+  firstName?: string;
+  lastName?: string;
   gender?: string;
   age?: number;
   bio?: string;

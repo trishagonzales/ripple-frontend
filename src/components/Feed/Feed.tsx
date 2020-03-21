@@ -15,18 +15,18 @@ const Feed = () => {
   const posts = useFetch<Post[]>(url.posts);
   let imageURL: any = useRef();
 
-  useEffect(() => {
-    if (posts.data) {
-      const images = posts.data.map(post => post.image);
+  // useEffect(() => {
+  //   if (posts.data) {
+  //     const images = posts.data.map(post => post.image);
 
-      images.forEach(img =>
-        http(`${url.uploads}/image/${img}`, { responseType: 'blob' }).then(res => {
-          console.log(res);
-          if (img) imageURL.current[img] = URL.createObjectURL(res.data);
-        })
-      );
-    }
-  }, [posts.data]);
+  //     images.forEach(img =>
+  //       http(`${url.uploads}/image/${img}`, { responseType: 'blob' }).then(res => {
+  //         console.log(res);
+  //         if (img) imageURL.current[img] = URL.createObjectURL(res.data);
+  //       })
+  //     );
+  //   }
+  // }, [posts.data]);
 
   return (
     <Div>
@@ -36,8 +36,7 @@ const Feed = () => {
       </HorizontalCenter>
 
       <PostList>
-        {posts.data &&
-          posts.data.map((post: any) => <PostCard variant='feed' post={post} key={post._id} />)}
+        {posts.data && posts.data.map((post: any) => <PostCard variant='feed' post={post} key={post._id} />)}
       </PostList>
     </Div>
   );

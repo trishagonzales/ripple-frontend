@@ -49,12 +49,13 @@ export default PostCard;
 export const Div = styled.div`
   .card {
     width: 300px;
+    padding: 1rem;
     display: grid;
     grid-template-columns: 60px 1fr 15% 15%;
     grid-template-rows: 50% auto auto auto;
     grid-template-areas: '';
 
-    ${(p) => p.theme.boxShadow};
+    ${p => p.theme.boxShadow};
     background: white;
   }
 `;

@@ -36,12 +36,14 @@ const Profile: React.FC = () => {
           setProfile(res1.data);
 
           // fetch image
-          const res2 = await http({
-            method: 'GET',
-            url: `${url.uploads}/avatar/${match.params.id}`,
-            responseType: 'blob'
-          });
-          setImage(res2.data);
+          if (user?.profile.avatar) {
+            const res2 = await http({
+              method: 'GET',
+              url: `${url.uploads}/avatar/${match.params.id}`,
+              responseType: 'blob'
+            });
+            setImage(res2.data);
+          }
         } catch (e) {
           onError(e);
         } finally {
@@ -55,7 +57,12 @@ const Profile: React.FC = () => {
   return (
     <>
       {editting ? (
-        <EditProfile id={user?._id} data={profile} imgURL={URL.createObjectURL(image)} setEditting={setEditting} />
+        <EditProfile
+          id={user?._id}
+          data={profile}
+          imgURL={image && URL.createObjectURL(image)}
+          setEditting={setEditting}
+        />
       ) : (
         <Div>
           <ProfileSection>

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 // import { useHistory } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import PulseLoader from 'react-spinners/PulseLoader';
+import { GlobalContext } from '../../providers';
 import useAPI from '../../hooks/useAPI';
 import url from '../../api/endpoints.json';
 import theme from '../../theme';
@@ -16,19 +17,22 @@ import Button from '../common/Button';
 export interface EditProfileProps {
   id: string | undefined;
   data: ProfileType | undefined;
-  imgURL: string;
+  imgURL: string | undefined;
   setEditting: React.Dispatch<boolean>;
 }
 
 const EditProfile: React.FC<EditProfileProps> = ({ data, imgURL, setEditting }) => {
+  const { dispatch } = useContext(GlobalContext);
   const [{ file, fileURL }, setFile] = useState({ file: '', fileURL: imgURL });
-  // let history = useHistory();
 
   const profile = useAPI();
   const image = useAPI();
 
   useEffect(() => {
-    if (profile.res && image.res && image.res.status === 200) return setEditting(false);
+    if (profile.res && image.res && image.res.status === 200) {
+      setEditting(false);
+      dispatch({ type: 'get-user-data' });
+    }
   }, [image.res, profile.res]);
 
   const handleSubmit = (values: ProfileType) => {
@@ -74,7 +78,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ data, imgURL, setEditting }) 
             bio: data?.bio,
             location: data?.location
           }}
-          onSubmit={(values) => handleSubmit(values)}
+          onSubmit={values => handleSubmit(values)}
         >
           {() => (
             <Form>

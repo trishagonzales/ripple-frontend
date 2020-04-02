@@ -3,5 +3,6 @@
   "users": "/users",
   "profiles": "/profiles",
   "posts": "/posts",
-  "uploads": "/uploads"
+  "image": "/uploads/image",
+  "avatar": "/uploads/avatar"
 }

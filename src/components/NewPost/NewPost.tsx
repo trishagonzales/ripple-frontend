@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import { useToasts } from 'react-toast-notifications';
 import PulseLoader from 'react-spinners/PulseLoader';
-import useAPIError from '../../hooks/useAPIError';
+import useHttp from '../../hooks/useHttp';
 import theme from '../../theme';
 import url from '../../api/endpoints.json';
-import http from '../../api/http.api';
+import http from '../../api/http';
 
 import { Div, UploadImage, Title, Body } from './NewPostStyles';
 import { Container } from '../common/Layout';
@@ -15,47 +15,45 @@ import Button from '../common/Button';
 
 const NewPost = () => {
   const [{ file, fileURL }, setFile] = useState({ file: '', fileURL: '' });
-  const [loading, setLoading] = useState(false);
   const { addToast } = useToasts();
   let history = useHistory();
-  const onError = useAPIError();
+  const post = useHttp();
 
-  const handleSubmit = async (values: { title: string; body: string }) => {
-    try {
-      setLoading(true);
-      const postRes = await http({
-        method: 'POST',
-        url: url.posts,
-        data: values
-      });
+  const asyncFunction = useCallback(
+    async (values) => {
+      try {
+        const postRes = await http({
+          method: 'POST',
+          url: url.posts,
+          data: values
+        });
 
-      const form = new FormData();
-      form.append('image', file);
+        const form = new FormData();
+        form.append('image', file);
+        await http({
+          method: 'PUT',
+          url: url.image + '/' + postRes.data._id,
+          data: form,
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
 
-      const imageRes = await http({
-        method: 'PUT',
-        url: url.uploads + '/image/' + postRes.data._id,
-        data: form,
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-
-      addToast('Successfully created new post.', { appearance: 'success' });
-    } catch (e) {
-      onError(e);
-    } finally {
-      setLoading(false);
-    }
-  };
+        addToast('Successfully created new post.', { appearance: 'success' });
+      } catch (e) {
+        throw e;
+      }
+    },
+    [file, addToast]
+  );
 
   return (
     <Div>
       <Container size='tablet'>
         <H1>NEW POST</H1>
-        <PulseLoader loading={loading} color={theme.color.main} size={12} />
+        <PulseLoader loading={post.loading} color={theme.color.main} size={12} />
 
-        <Formik initialValues={{ title: '', body: '' }} onSubmit={values => handleSubmit(values)}>
+        <Formik initialValues={{ title: '', body: '' }} onSubmit={(values) => post.callAPI({ asyncFunction, values })}>
           {() => (
             <Form>
               <UploadImage image={fileURL}>

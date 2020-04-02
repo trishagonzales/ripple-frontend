@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import PulseLoader from 'react-spinners/PulseLoader';
-import useFetch from '../../hooks/useFetch';
-import http from '../../api/http.api';
-import url from '../../api/endpoints.json';
+import useHttp from '../../hooks/useHttp';
+// import useAsync from '../../hooks/useAsync';
+import { getAllPosts } from '../../api/api';
 import { Post } from '../../types/types';
 
 import { H1 } from '../common/Typography';
@@ -12,33 +12,20 @@ import PostList from '../Post/PostList';
 import PostCard from '../Post/PostCard';
 
 const Feed = () => {
-  const posts = useFetch<Post[]>(url.posts);
-  let imageURL: any = useRef();
+  const { res, loading, callAPI } = useHttp<Post[]>();
 
   useEffect(() => {
-    if (posts.data) {
-      const images = posts.data.map(post => post.image);
-
-      images.forEach(img =>
-        http(`${url.uploads}/image/${img}`, { responseType: 'blob' }).then(res => {
-          console.log(res);
-          if (img) imageURL.current[img] = URL.createObjectURL(res.data);
-        })
-      );
-    }
-  }, [posts.data]);
+    callAPI({ asyncFunction: getAllPosts });
+  }, [callAPI]);
 
   return (
     <Div>
       <H1>FEED</H1>
       <HorizontalCenter>
-        <PulseLoader loading={posts.isLoading} color={'#D80416'} size={12} />
+        <PulseLoader loading={loading} color={'#D80416'} size={12} />
       </HorizontalCenter>
 
-      <PostList>
-        {posts.data &&
-          posts.data.map((post: any) => <PostCard variant='feed' post={post} key={post._id} />)}
-      </PostList>
+      <PostList>{res && res.data.map((post: any) => <PostCard variant='feed' post={post} key={post._id} />)}</PostList>
     </Div>
   );
 };

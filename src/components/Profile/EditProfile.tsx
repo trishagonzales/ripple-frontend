@@ -1,61 +1,47 @@
-import React, { useState, useEffect, useContext } from 'react';
-// import { useHistory } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Formik, Form, Field } from 'formik';
 import PulseLoader from 'react-spinners/PulseLoader';
-import { GlobalContext } from '../../providers';
-import useAPI from '../../hooks/useAPI';
-import url from '../../api/endpoints.json';
+import useHttp from '../../hooks/useHttp';
+import useGlobal from '../../hooks/useGlobal';
+import { updateProfile, updateAvatar } from '../../api/api';
 import theme from '../../theme';
 import { ProfileType } from '../../types/types';
 
-import { Div, Image } from './EditProfileStyles';
+import { Div, Avatar } from './EditProfileStyles';
 import { Container, HorizontalCenter, Center } from '../common/Layout';
 import { H2 } from '../common/Typography';
 import { Input, Textarea } from '../common/Input';
 import Button from '../common/Button';
 
 export interface EditProfileProps {
-  id: string | undefined;
   data: ProfileType | undefined;
-  imgURL: string | undefined;
+  avatarURL: string | undefined;
   setEditting: React.Dispatch<boolean>;
 }
 
-const EditProfile: React.FC<EditProfileProps> = ({ data, imgURL, setEditting }) => {
-  const { dispatch } = useContext(GlobalContext);
-  const [{ file, fileURL }, setFile] = useState({ file: '', fileURL: imgURL });
+const EditProfile: React.FC<EditProfileProps> = ({ data, avatarURL, setEditting }) => {
+  const [file, setFile] = useState<Blob>();
+  const { dispatch } = useGlobal();
+  const { res, loading, error, callAPI } = useHttp();
 
-  const profile = useAPI();
-  const image = useAPI();
+  const asyncFunction = useCallback(
+    async (values) => {
+      try {
+        await updateProfile(values);
+        if (file) await updateAvatar(file);
+      } catch (e) {
+        throw e;
+      }
+    },
+    [file]
+  );
 
   useEffect(() => {
-    if (profile.res && image.res && image.res.status === 200) {
+    if (res && !error) {
       setEditting(false);
       dispatch({ type: 'get-user-data' });
     }
-  }, [image.res, profile.res]);
-
-  const handleSubmit = (values: ProfileType) => {
-    profile.callAPI({
-      method: 'PUT',
-      url: url.profiles + '/me',
-      data: values
-    });
-
-    const form = new FormData();
-    form.append('avatar', file);
-
-    if (file) {
-      image.callAPI({
-        method: 'PUT',
-        url: url.uploads + '/avatar',
-        data: form,
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-    }
-  };
+  }, [res, error, setEditting, dispatch]);
 
   return (
     <Div>
@@ -65,7 +51,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ data, imgURL, setEditting }) 
       </div>
 
       <HorizontalCenter>
-        <PulseLoader loading={profile.isLoading} color={theme.color.main} size={12} />
+        <PulseLoader loading={loading} color={theme.color.main} size={12} />
       </HorizontalCenter>
 
       <Container className='container' size='tablet'>
@@ -78,11 +64,11 @@ const EditProfile: React.FC<EditProfileProps> = ({ data, imgURL, setEditting }) 
             bio: data?.bio,
             location: data?.location
           }}
-          onSubmit={values => handleSubmit(values)}
+          onSubmit={(values) => callAPI({ asyncFunction, values })}
         >
           {() => (
             <Form>
-              <Image url={fileURL}>
+              <Avatar url={file ? URL.createObjectURL(file) : avatarURL}>
                 <Center>
                   <label htmlFor='input-file'>
                     <i className='fa fa-upload'></i>
@@ -97,10 +83,10 @@ const EditProfile: React.FC<EditProfileProps> = ({ data, imgURL, setEditting }) 
                   accept='image/*'
                   onChange={(e: any) => {
                     const file = e.target.files[0];
-                    setFile({ file, fileURL: URL.createObjectURL(file) });
+                    setFile(file);
                   }}
                 />
-              </Image>
+              </Avatar>
 
               <div className='firstName'>
                 <label htmlFor=''>FIRST NAME</label>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import moment from 'moment';
 import useHttp from '../../hooks/useHttp';
@@ -37,29 +38,31 @@ const PostCard: React.FC<PostCardProps> = ({ variant, post }) => {
   }, [image.res, avatar.res]);
 
   return (
-    <Card>
-      <div className='image'>{imageURL && <Image url={imageURL} />}</div>
+    <Link to={`/post/${_id}`}>
+      <Card>
+        <div className='image'>{imageURL && <Image url={imageURL} />}</div>
 
-      <div className='title'>
-        <Text>{title}</Text>
-      </div>
+        <div className='title'>
+          <Text>{title}</Text>
+        </div>
 
-      <div className='avatar'>
-        <Avatar url={avatarURL} />
-      </div>
+        <div className='avatar'>
+          <Avatar url={avatarURL} />
+        </div>
 
-      <div className='author'>
-        <Text>{author.profile.firstName + ' ' + author.profile.lastName}</Text>
-      </div>
+        <div className='author'>
+          <Text>{author.profile.firstName + ' ' + author.profile.lastName}</Text>
+        </div>
 
-      <div className='date'>
-        <Text secondary>{date}</Text>
-      </div>
+        <div className='date'>
+          <Text secondary>{date}</Text>
+        </div>
 
-      <div className='buttons'>
-        <Button>READ</Button>
-      </div>
-    </Card>
+        <div className='buttons'>
+          <Button>READ</Button>
+        </div>
+      </Card>
+    </Link>
   );
 };
 
@@ -140,5 +143,8 @@ export const Avatar = styled.div<{ url: string }>`
   width: 40px;
   height: 40px;
   background: ${(p) => (p.url ? `url(${p.url})` : 'lightgrey')};
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
   border-radius: 50%;
 `;

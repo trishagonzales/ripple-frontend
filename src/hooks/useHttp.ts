@@ -10,6 +10,7 @@ export interface CallAPIParams {
 const useHttp = <T>() => {
   const [res, setRes] = useState<AxiosResponse<T>>();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState();
   const onError = useHttpError();
 
   const callAPI = useCallback(
@@ -20,6 +21,7 @@ const useHttp = <T>() => {
         const res = await asyncFunction(values);
         setRes(res);
       } catch (e) {
+        setError(e);
         onError(e);
       } finally {
         setLoading(false);
@@ -28,7 +30,7 @@ const useHttp = <T>() => {
     [onError]
   );
 
-  return { res, loading, callAPI };
+  return { res, loading, error, callAPI };
 };
 
 export default useHttp;

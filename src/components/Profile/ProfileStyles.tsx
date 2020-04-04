@@ -70,22 +70,22 @@ export const ProfileSection = styled.section`
   }
 
   label {
-    font-size: 14px;
+    font-size: 12px;
     color: grey;
   }
 
   .firstName p,
   .lastName p {
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 600;
   }
 `;
 
-export const Image = styled.div<{ url: string | null }>`
+export const Avatar = styled.div<{ url: string | null }>`
   width: 100px;
   height: 100px;
   justify-self: center;
-  background: ${p => (p.url ? `url(${p.url})` : 'lightgrey')};
+  background: ${(p) => (p.url ? `url(${p.url})` : 'lightgrey')};
   background-position: center;
   background-size: contain;
   border-radius: 50%;

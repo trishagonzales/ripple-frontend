@@ -1,52 +1,65 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
+import moment from 'moment';
+import useHttp from '../../hooks/useHttp';
+import { getOnePost, getImage } from '../../api/api';
 import { Post } from '../../types/types';
 
-import { Text, H1 } from '../common/Typography';
+import { H1, Text } from '../common/Typography';
 import Button from '../common/Button';
 
-export interface PostPageProps {
-  post: Post;
-}
+const PostPage: React.FC = () => {
+  const { params } = useRouteMatch<{ id: string }>();
+  const { res, callAPI } = useHttp<Post>();
+  const image = useHttp();
 
-const PostPage: React.FC<PostPageProps> = ({ post }) => {
-  const {
-    image,
-    title,
-    body,
-    author: {
-      profile: { firstName, lastName }
-    },
-    dateCreated,
-    lastModified,
-    likes
-  } = post;
+  useEffect(() => {
+    callAPI({ asyncFunction: () => getOnePost(params.id) });
+    image.callAPI({ asyncFunction: () => getImage(params.id) });
+  }, [callAPI, image.callAPI, params.id]);
+
+  console.log('Post: ', res?.data);
+  console.log('Image: ', image.res);
+
+  const dateCreated = moment(res?.data.dateCreated).format('l');
+  const lastModified = moment(res?.data.lastModified).format('l');
+
+  const post = res?.data;
+  const author = res?.data.author;
 
   return (
-    <Div>
-      <Author>
-        <div className='avatar'>{}</div>
-        <Text>{firstName + ' ' + lastName}</Text>
-      </Author>
+    <Page>
+      {params.id === author?._id ? (
+        <Header>
+          <Button>EDIT</Button>
+          <Button>DELETE</Button>
+        </Header>
+      ) : (
+        <Header>
+          <Avatar url={image.res && URL.createObjectURL(image.res.data)} />
+          <Text>{author?.profile.firstName + ' ' + author?.profile.lastName}</Text>
+          <i className='far fa-heart'></i>
+        </Header>
+      )}
 
-      <Button>LIKE</Button>
+      <H1>{post?.title}</H1>
 
-      <Text secondary>{lastModified ? lastModified : dateCreated}</Text>
-      <Text>{likes.length}</Text>
+      <Text secondary>Date created: {dateCreated}</Text>
+      {lastModified && <Text secondary>Last modified: {lastModified}</Text>}
 
-      <H1>{title}</H1>
-
-      <Image></Image>
-
-      <Text>{body}</Text>
-    </Div>
+      <Text>{post?.body}</Text>
+    </Page>
   );
 };
 
 export default PostPage;
 
-export const Div = styled.div``;
+export const Page = styled.div`
+  max-width: 500px;
+  padding: 1em;
+`;
 
-export const Author = styled.div``;
+export const Avatar = styled.div<{ url: string | undefined }>``;
 
-export const Image = styled.div``;
+export const Header = styled.div``;

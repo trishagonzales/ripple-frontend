@@ -7,7 +7,6 @@ export interface User {
 }
 
 export interface ProfileType {
-  _id?: string;
   avatar?: string;
   firstName?: string;
   lastName?: string;
@@ -23,10 +22,11 @@ export interface Post {
   title: string;
   body: string;
   author: {
+    _id: string;
     profile: {
-      avatar?: Blob | string;
       firstName: string;
       lastName: string;
+      avatar?: Blob | string;
     };
   };
   dateCreated: string;

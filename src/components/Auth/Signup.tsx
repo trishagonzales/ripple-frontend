@@ -1,19 +1,19 @@
-import React, { useContext } from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as yup from 'yup';
 import PulseLoader from 'react-spinners/PulseLoader';
 import theme from '../../theme';
-import { GlobalContext } from '../../providers';
-import useAPI from '../../hooks/useAPI';
-import url from '../../api/endpoints.json';
+import useHttp from '../../hooks/useHttp';
+import useGlobal from '../../hooks/useGlobal';
+import { signup } from '../../api/api';
 
 import { Div, AuthContainer } from './AuthStyles';
 import { H1, Text } from '../common/Typography';
 import { HorizontalCenter } from '../common/Layout';
 import { Input, InputLabel } from '../common/Input';
 import Button from '../common/Button';
-import { storeJwt } from '../../api/auth.api';
+import { storeJwt } from '../../api/auth';
 
 const signupSchema = yup.object().shape({
   firstName: yup
@@ -40,22 +40,24 @@ const signupSchema = yup.object().shape({
 });
 
 const Signup = () => {
-  const { res, isLoading, callAPI } = useAPI();
-  const { dispatch } = useContext(GlobalContext);
+  const { res, loading, callAPI } = useHttp();
+  const { dispatch } = useGlobal();
   let history = useHistory();
 
-  if (res && !isLoading) {
-    storeJwt(res.headers['x-auth-token']);
-    dispatch({ type: 'login', payload: res.data });
-    history.push('/feed');
-  }
+  useEffect(() => {
+    if (res) {
+      storeJwt(res.headers['x-auth-token']);
+      dispatch({ type: 'login', payload: res.data });
+      history.push('/feed');
+    }
+  }, [res, dispatch, history]);
 
   return (
     <Div>
       <AuthContainer>
         <H1>SIGNUP</H1>
         <HorizontalCenter>
-          <PulseLoader loading={isLoading} color={theme.color.main} size={12} />
+          <PulseLoader loading={loading} color={theme.color.main} size={12} />
         </HorizontalCenter>
 
         <Formik
@@ -63,7 +65,7 @@ const Signup = () => {
           validationSchema={signupSchema}
           validateOnBlur={false}
           validateOnChange={false}
-          onSubmit={(values) => callAPI({ method: 'POST', url: url.users, data: values })}
+          onSubmit={(values) => callAPI({ asyncFunction: () => signup(values) })}
         >
           {({ errors }) => (
             <Form>

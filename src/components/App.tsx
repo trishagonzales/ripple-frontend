@@ -2,9 +2,9 @@ import React, { useReducer, useEffect } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { GlobalProvider, initialGlobal } from '../providers';
 import globalReducer from '../reducers/global.reducer';
-import useAPI from '../hooks/useAPI';
-import { getJwt } from '../api/auth.api';
-import url from '../api/endpoints.json';
+import useHttp from '../hooks/useHttp';
+import { getUserData } from '../api/api';
+import { getJwt } from '../api/auth';
 
 import { GlobalStyle } from './AppStyles';
 import Navbar from './Navbar/Navbar';
@@ -13,23 +13,22 @@ import Signup from './Auth/Signup';
 import Home from './Home/Home';
 import Feed from './Feed/Feed';
 import NewPost from './NewPost/NewPost';
+import PostPage from './Post/PostPage';
 import Profile from './Profile/Profile';
 import EditProfile from './Profile/EditProfile';
+import Settings from './Settings/Settings';
 
 function App(): null | JSX.Element {
   const [global, dispatch] = useReducer(globalReducer, initialGlobal);
-  const { res, setRes, isLoading, callAPI } = useAPI();
+  const { res, loading, callAPI } = useHttp();
 
   useEffect(() => {
-    if (!global.user && getJwt()) {
-      callAPI({ method: 'GET', url: url.users + '/me' });
-    }
-  }, []);
+    if (!global.user && getJwt()) callAPI({ asyncFunction: getUserData });
+  }, [global.user, callAPI]);
 
-  if (res && !isLoading) {
-    dispatch({ type: 'login', payload: res.data });
-    setRes(null);
-  }
+  useEffect(() => {
+    if (res && !loading) dispatch({ type: 'login', payload: res.data });
+  }, [res, loading]);
 
   return (
     <GlobalProvider value={{ global, dispatch }}>
@@ -37,14 +36,17 @@ function App(): null | JSX.Element {
       <Navbar />
       {global.user ? (
         <Switch>
+          <Route path='/settings' component={Settings} />
           <Route path='/profile/:id' component={Profile} />
           <Route path='/edit-profile' component={EditProfile} />
+          <Route path='/post/:id' component={PostPage} />
           <Route path='/feed' component={Feed} />
           <Route path='/new-post' component={NewPost} />
           <Route path='/' exact component={Home} />
         </Switch>
       ) : (
         <Switch>
+          <Route path='/post/:id' component={PostPage} />
           <Route path='/profile/:id' component={Profile} />
           <Route path='/feed' component={Feed} />
           <Route path='/login' component={Login} />

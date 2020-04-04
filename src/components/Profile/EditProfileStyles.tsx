@@ -83,13 +83,13 @@ export const Div = styled.div`
   }
 `;
 
-export const Image = styled.div<{ url: string | undefined }>`
+export const Avatar = styled.div<{ url: string | undefined }>`
   grid-area: avatar;
   width: 100px;
   height: 100px;
   margin: auto;
 
-  background: ${p => (p.url ? `url(${p.url})` : 'lightgrey')};
+  background: ${(p) => (p.url ? `url(${p.url})` : 'lightgrey')};
   background-position: center;
   background-size: contain;
   border-radius: 50%;

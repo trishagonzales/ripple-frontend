@@ -6,8 +6,8 @@ export interface TextProps {
 }
 
 export const Text = styled.p<TextProps>`
-  font-size: ${p => (p.error ? '12px' : '16px')};
-  color: ${p => {
+  font-size: ${(p) => (p.error ? '12px' : '16px')};
+  color: ${(p) => {
     if (p.secondary) return p.theme.color.fg2;
     if (p.error) return 'red';
     return p.theme.color.fg;

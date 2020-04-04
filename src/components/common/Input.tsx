@@ -5,10 +5,12 @@ export const Input = styled.input`
   width: 100%;
   padding: 0.6em;
   margin: 0.2em;
-  border: 1px solid ${p => p.theme.color.fg2};
+  border: 1px solid #cecece;
+  ${(p) => p.theme.borderRadius}
+  transition: border-color ease-in 100ms;
 
-  :focus {
-    border-color: black;
+  &:focus {
+    border-color: #777;
     outline: none;
   }
 `;
@@ -18,7 +20,7 @@ export const InputLabel = styled.label`
   margin-top: 1em;
 
   font-size: 14px;
-  color: ${p => p.theme.color.fg2};
+  color: ${(p) => p.theme.color.fg2};
 `;
 
 export const Textarea = styled.textarea`
@@ -27,8 +29,8 @@ export const Textarea = styled.textarea`
   padding: 1.2rem;
 
   font-family: Poppins, sans-serif;
-  color: ${p => p.theme.color.fg};
-  border: 1px solid ${p => p.theme.color.fg2};
+  color: ${(p) => p.theme.color.fg};
+  border: 1px solid ${(p) => p.theme.color.fg2};
   resize: none;
 
   :focus {

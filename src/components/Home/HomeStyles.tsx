@@ -21,7 +21,7 @@ export const Section = styled.section`
       }
 
       button {
-        font-size: 1.2rem;
+        font-size: 1rem;
         margin-top: 4em;
         width: 100%;
       }

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { GlobalContext } from '../../providers';
-import { deleteJwt } from '../../api/auth.api';
+import { deleteJwt } from '../../api/auth';
 
 import { Nav, Div, Menu, Burger } from './NavbarStyles';
 import Button from '../common/Button';

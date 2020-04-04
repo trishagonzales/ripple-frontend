@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { GlobalContext } from '../../providers';
+import useGlobal from '../../hooks/useGlobal';
 import headerImage from '../../assets/post.svg';
 
 import { Section } from './HomeStyles';
@@ -9,9 +9,7 @@ import { H1, Text } from '../common/Typography';
 import Button from '../common/Button';
 
 const Home = () => {
-  const {
-    global: { user }
-  } = useContext(GlobalContext);
+  const { user } = useGlobal();
 
   return (
     <>

@@ -3,9 +3,10 @@ import { size } from '../AppStyles';
 
 export const Nav = styled.nav`
   position: sticky;
+  width: 100vw;
   padding: 0.3em 1.2em;
   background: white;
-  ${p => p.theme.boxShadow}
+  ${(p) => p.theme.boxShadow}
 `;
 
 export const Div = styled.div`
@@ -17,7 +18,7 @@ export const Div = styled.div`
   .brand {
     font-size: 28px;
     font-weight: 700;
-    color: ${p => p.theme.color.main};
+    color: ${(p) => p.theme.color.main};
     margin: 0;
   }
 
@@ -41,18 +42,18 @@ export const Menu = styled.div<{ open: boolean }>`
   a,
   .logout {
     padding: 0.5em 0.6em;
-    color: ${p => p.theme.color.fg2};
+    color: ${(p) => p.theme.color.fg2};
     :hover {
-      color: ${p => p.theme.color.fg};
+      color: ${(p) => p.theme.color.fg};
     }
   }
 
   a.active {
-    color: ${p => p.theme.color.main};
+    color: ${(p) => p.theme.color.main};
   }
 
   @media (max-width: 820px) {
-    ${p => (p.open ? 'display: flex' : 'display: none')};
+    ${(p) => (p.open ? 'display: flex' : 'display: none')};
     flex-direction: column;
     position: fixed;
     left: 0;
@@ -90,6 +91,6 @@ export const Burger = styled.div<{ user: any; onClick: any }>`
   }
 
   @media (max-width: 820px) {
-    ${p => (p.user ? 'display: unset' : 'display: none')};
+    ${(p) => (p.user ? 'display: unset' : 'display: none')};
   }
 `;

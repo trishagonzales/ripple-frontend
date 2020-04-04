@@ -1,5 +1,5 @@
 import http from './http';
-import { ProfileType } from '../types/types';
+import { ProfileType, Post } from '../types/types';
 
 interface LoginInput {
   email: string;
@@ -51,13 +51,15 @@ export const updateProfile = (profile: ProfileType) => http({ method: 'PUT', url
 
 export const getAllPosts = () => http('/posts');
 
+export const getUserPosts = (id: string) => http(`/posts/user/${id}`);
+
 export const getOnePost = (id: string) => http(`/posts/${id}`);
 
-export const createPost = () => {};
+export const createPost = (post: Post) => http({ method: 'POST', url: '/posts' });
 
-export const updatePost = () => {};
+export const updatePost = (id: string, post: Post) => http({ method: 'PUT', url: `/posts/${id}`, data: post });
 
-export const deletePost = () => {};
+export const deletePost = (id: string) => http({ method: 'DELETE', url: `/posts/${id}` });
 
 //  UPLOADS
 
@@ -73,6 +75,14 @@ export const getAvatar = (id: string) => {
   return http({ method: 'GET', url: `/uploads/avatar/${id}`, responseType: 'blob' });
 };
 
-export const updateAvatar = () => {
-  return http({ method: 'PUT', url: `/uploads/avatar` });
+export const updateAvatar = (file: Blob) => {
+  const form = new FormData();
+  form.append('avatar', file);
+
+  return http({
+    method: 'PUT',
+    url: '/uploads/avatar',
+    data: form,
+    headers: { 'content-type': 'multipart/form-data' }
+  });
 };

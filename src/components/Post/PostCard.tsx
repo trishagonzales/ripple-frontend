@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import moment from 'moment';
 import useHttp from '../../hooks/useHttp';
 import { getImage, getAvatar } from '../../api/api';
-import { Post } from '../../types/types';
+import { PostType } from '../../types/types';
 
 import { Text } from '../common/Typography';
 import Button from '../common/Button';
@@ -12,7 +12,7 @@ import { device } from '../AppStyles';
 
 export interface PostCardProps {
   variant: 'feed' | 'mypost';
-  post: Post;
+  post: PostType;
 }
 
 const PostCard: React.FC<PostCardProps> = ({ variant, post }) => {
@@ -23,6 +23,7 @@ const PostCard: React.FC<PostCardProps> = ({ variant, post }) => {
   const [avatarURL, setAvatarURL] = useState('');
   const image = useHttp();
   const avatar = useHttp();
+  let history = useHistory();
 
   useEffect(() => {
     image.callAPI({ asyncFunction: () => getImage(_id) });
@@ -97,7 +98,7 @@ export const Card = styled.div`
   }
   .title {
     grid-area: title;
-    padding: 0.7rem 1rem;
+    padding: 1rem 1rem;
     p {
       font-size: 18px;
       font-weight: bold;

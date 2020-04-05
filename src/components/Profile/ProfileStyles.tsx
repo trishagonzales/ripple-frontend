@@ -6,10 +6,12 @@ export const Div = styled.div`
 `;
 
 export const ProfileSection = styled.section`
+  max-width: ${size.tablet};
+  margin: auto;
+
   .header {
-    max-width: ${size.tablet};
-    margin: 1em auto 0 auto;
-    padding: 0.5em;
+    /* margin: 1em auto 0 auto;
+    padding: 0.5em; */
     display: flex;
     align-items: start;
     button {
@@ -91,4 +93,14 @@ export const Avatar = styled.div<{ url: string | null }>`
   border-radius: 50%;
 `;
 
-export const PostSection = styled.section``;
+export const PostSection = styled.section`
+  max-width: ${size.tablet};
+  margin: auto;
+
+  .header {
+    margin: 1em auto 0 auto;
+    padding: 0.5em;
+    display: flex;
+    align-items: start;
+  }
+`;

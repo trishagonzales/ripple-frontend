@@ -5,7 +5,7 @@ import theme from '../../theme';
 import useGlobal from '../../hooks/useGlobal';
 import useHttp from '../../hooks/useHttp';
 import { getOneProfile, getAvatar, getUserPosts } from '../../api/api';
-import { ProfileType, Post } from '../../types/types';
+import { ProfileType, PostType } from '../../types/types';
 
 import { Div, ProfileSection, PostSection, Avatar } from './ProfileStyles';
 import EditProfile from './EditProfile';
@@ -21,18 +21,16 @@ const Profile: React.FC = () => {
 
   const profile = useHttp<ProfileType>();
   const avatar = useHttp<Blob>();
-  const posts = useHttp<Post[]>();
+  const posts = useHttp<PostType[]>();
 
   useEffect(() => {
-    if (!editting) {
-      profile.callAPI({ asyncFunction: () => getOneProfile(params.id) });
-      posts.callAPI({ asyncFunction: () => getUserPosts(params.id) });
-    }
-  }, [editting, params.id, profile.callAPI, posts.callAPI]);
+    profile.callAPI({ asyncFunction: () => getOneProfile(params.id) });
+    posts.callAPI({ asyncFunction: () => getUserPosts(params.id) });
+  }, [params.id, profile.callAPI, posts.callAPI]);
 
   useEffect(() => {
-    if (!editting && profile.res?.data.avatar) avatar.callAPI({ asyncFunction: () => getAvatar(params.id) });
-  }, [editting, params.id, profile.res, avatar.callAPI]);
+    if (profile.res?.data.avatar) avatar.callAPI({ asyncFunction: () => getAvatar(params.id) });
+  }, [params.id, profile.res, avatar.callAPI]);
 
   return (
     <>
@@ -88,19 +86,19 @@ const Profile: React.FC = () => {
             </Container>
           </ProfileSection>
 
-          {user?._id !== params.id ? (
-            <PostSection>
-              <div className='header'>
-                <H2>POSTS</H2>
-              </div>
+          <PostSection>
+            <div className='header'>
+              <H2>POSTS</H2>
+            </div>
 
-              <Container size='tablet'>
-                {posts.res?.data.map((post) => (
-                  <PostCard key={post._id} post={post} variant={user?._id === params.id ? 'mypost' : 'feed'} />
-                ))}
-              </Container>
-            </PostSection>
-          ) : null}
+            {posts.res?.data.map((post) => (
+              <PostCard
+                key={post._id}
+                post={post}
+                variant={user?._id === params.id ? 'mypost' : 'feed'}
+              />
+            ))}
+          </PostSection>
         </Div>
       )}
     </>

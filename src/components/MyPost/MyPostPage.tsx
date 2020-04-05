@@ -1,11 +1,11 @@
 import React from 'react';
-import { Post } from '../../types/types';
+import { PostType } from '../../types/types';
 
 import Button from '../common/Button';
 import styled from 'styled-components';
 
 export interface PostPageProps {
-  post: Post;
+  post: PostType;
 }
 
 const PostPage: React.FC<PostPageProps> = () => {

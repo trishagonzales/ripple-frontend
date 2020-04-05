@@ -7,7 +7,7 @@ export interface CallAPIParams {
   values?: any;
 }
 
-const useHttp = <T>() => {
+const useHttp = <T = any>() => {
   const [res, setRes] = useState<AxiosResponse<T>>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState();

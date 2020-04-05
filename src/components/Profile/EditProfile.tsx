@@ -62,7 +62,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ data, avatarURL, setEditting 
             gender: data?.gender,
             age: data?.age,
             bio: data?.bio,
-            location: data?.location
+            location: data?.location,
           }}
           onSubmit={(values) => callAPI({ asyncFunction, values })}
         >

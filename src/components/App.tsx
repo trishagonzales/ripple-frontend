@@ -13,7 +13,7 @@ import Signup from './Auth/Signup';
 import Home from './Home/Home';
 import Feed from './Feed/Feed';
 import NewPost from './NewPost/NewPost';
-import PostPage from './Post/PostPage';
+import Post from './Post/Post';
 import Profile from './Profile/Profile';
 import EditProfile from './Profile/EditProfile';
 import Settings from './Settings/Settings';
@@ -39,14 +39,14 @@ function App(): null | JSX.Element {
           <Route path='/settings' component={Settings} />
           <Route path='/profile/:id' component={Profile} />
           <Route path='/edit-profile' component={EditProfile} />
-          <Route path='/post/:id' component={PostPage} />
+          <Route path='/post/:id' component={Post} />
           <Route path='/feed' component={Feed} />
           <Route path='/new-post' component={NewPost} />
           <Route path='/' exact component={Home} />
         </Switch>
       ) : (
         <Switch>
-          <Route path='/post/:id' component={PostPage} />
+          <Route path='/post/:id' component={Post} />
           <Route path='/profile/:id' component={Profile} />
           <Route path='/feed' component={Feed} />
           <Route path='/login' component={Login} />

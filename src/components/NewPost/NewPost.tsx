@@ -25,7 +25,7 @@ const NewPost = () => {
         const postRes = await http({
           method: 'POST',
           url: url.posts,
-          data: values
+          data: values,
         });
 
         const form = new FormData();
@@ -35,11 +35,12 @@ const NewPost = () => {
           url: url.image + '/' + postRes.data._id,
           data: form,
           headers: {
-            'Content-Type': 'multipart/form-data'
-          }
+            'Content-Type': 'multipart/form-data',
+          },
         });
 
         addToast('Successfully created new post.', { appearance: 'success' });
+        history.goBack();
       } catch (e) {
         throw e;
       }
@@ -53,7 +54,10 @@ const NewPost = () => {
         <H1>NEW POST</H1>
         <PulseLoader loading={post.loading} color={theme.color.main} size={12} />
 
-        <Formik initialValues={{ title: '', body: '' }} onSubmit={(values) => post.callAPI({ asyncFunction, values })}>
+        <Formik
+          initialValues={{ title: '', body: '' }}
+          onSubmit={(values) => post.callAPI({ asyncFunction, values })}
+        >
           {() => (
             <Form>
               <UploadImage image={fileURL}>

@@ -39,19 +39,22 @@ export const UploadImage = styled.div<{ image: any }>`
   align-items: center;
 
   border: 2px dashed lightgrey;
-  background: url(${p => p.image});
+  background: url(${(p) => p.image});
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
 
   .img-upload-btn {
+    padding: 0.6em 0.8em;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 0.7em 1em;
+    font-size: 14px;
     font-weight: 600;
     color: grey;
-    background: ${p => p.theme.color.bg2};
+    ${(p) => p.theme.borderRadius};
+    background: ${(p) => p.theme.color.bg2};
+    opacity: 0.8;
     cursor: pointer;
     :hover {
       filter: brightness(98%);

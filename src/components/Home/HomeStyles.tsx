@@ -22,6 +22,8 @@ export const Section = styled.section`
 
       button {
         font-size: 1rem;
+        padding-top: 0.8em;
+        padding-bottom: 0.8em;
         margin-top: 4em;
         width: 100%;
       }

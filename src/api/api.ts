@@ -1,5 +1,5 @@
 import http from './http';
-import { ProfileType, Post } from '../types/types';
+import { ProfileType, PostType } from '../types/types';
 
 interface LoginInput {
   email: string;
@@ -45,7 +45,8 @@ export const getAllProfiles = () => http('/profiles');
 
 export const getOneProfile = (id: string) => http(`/profiles/${id}`);
 
-export const updateProfile = (profile: ProfileType) => http({ method: 'PUT', url: '/profiles', data: profile });
+export const updateProfile = (profile: ProfileType) =>
+  http({ method: 'PUT', url: '/profiles', data: profile });
 
 //  POSTS
 
@@ -55,9 +56,10 @@ export const getUserPosts = (id: string) => http(`/posts/user/${id}`);
 
 export const getOnePost = (id: string) => http(`/posts/${id}`);
 
-export const createPost = (post: Post) => http({ method: 'POST', url: '/posts' });
+export const createPost = (post: PostType) => http({ method: 'POST', url: '/posts' });
 
-export const updatePost = (id: string, post: Post) => http({ method: 'PUT', url: `/posts/${id}`, data: post });
+export const updatePost = (id: string, values: any) =>
+  http({ method: 'PUT', url: `/posts/${id}`, data: values });
 
 export const deletePost = (id: string) => http({ method: 'DELETE', url: `/posts/${id}` });
 
@@ -67,8 +69,16 @@ export const getImage = (id: string) => {
   return http({ method: 'GET', url: `/uploads/image/${id}`, responseType: 'blob' });
 };
 
-export const updateImage = (id: string) => {
-  return http({ method: 'PUT', url: `/uploads/image/${id}` });
+export const updateImage = (id: string, file: Blob) => {
+  const form = new FormData();
+  form.append('avatar', file);
+
+  return http({
+    method: 'PUT',
+    url: `/uploads/image/${id}`,
+    data: form,
+    headers: { 'content-type': 'multipart/form-data' },
+  });
 };
 
 export const getAvatar = (id: string) => {
@@ -83,6 +93,6 @@ export const updateAvatar = (file: Blob) => {
     method: 'PUT',
     url: '/uploads/avatar',
     data: form,
-    headers: { 'content-type': 'multipart/form-data' }
+    headers: { 'content-type': 'multipart/form-data' },
   });
 };

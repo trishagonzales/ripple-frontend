@@ -2,8 +2,8 @@ export interface User {
   _id: string;
   email: string;
   profile: ProfileType;
-  posts?: Post[];
-  likedPosts?: Post[];
+  posts?: PostType[];
+  likedPosts?: PostType[];
 }
 
 export interface ProfileType {
@@ -16,7 +16,7 @@ export interface ProfileType {
   location?: string;
 }
 
-export interface Post {
+export interface PostType {
   _id: string;
   image?: string;
   title: string;

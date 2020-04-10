@@ -5,7 +5,7 @@ import { ThemeProvider } from 'styled-components';
 import { ToastProvider } from 'react-toast-notifications';
 import theme from './theme';
 import App from './components/App';
-import 'font-awesome/css/font-awesome.min.css';
+import '@fortawesome/fontawesome-free/css/all.css';
 import 'pretty-checkbox/dist/pretty-checkbox.min.css';
 
 ReactDOM.render(

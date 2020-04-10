@@ -27,15 +27,15 @@ export const HorizontalCenter = styled.div`
 `;
 
 export const Grid = styled.div<{ name: string }>`
-  grid-area: ${p => p.name};
+  grid-area: ${(p) => p.name};
 `;
 
 type SizeType = 'phone' | 'tablet' | 'desktop' | 'desktopL';
 
 export const Container = styled.div<{ size?: SizeType }>`
-  max-width: ${p => (p.size ? size[p.size] : size.phone)};
+  max-width: ${(p) => (p.size ? size[p.size] : size.phone)};
   margin: 20px auto 20px auto;
   padding: 2em;
   background: white;
-  ${p => p.theme.boxShadow}
+  ${(p) => p.theme.boxShadow}
 `;

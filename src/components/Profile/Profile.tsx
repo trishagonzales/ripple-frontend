@@ -10,7 +10,7 @@ import { ProfileType, PostType } from '../../types/types';
 import { Div, ProfileSection, PostSection, Avatar } from './ProfileStyles';
 import EditProfile from './EditProfile';
 import PostCard from '../Post/PostCard';
-import { Text, H2 } from '../common/Typography';
+import { Text, H2, H3 } from '../common/Typography';
 import { HorizontalCenter, Container } from '../common/Layout';
 import Button from '../common/Button';
 
@@ -18,10 +18,12 @@ const Profile: React.FC = () => {
   const { user } = useGlobal();
   const { params } = useRouteMatch<{ id: string }>();
   const [editting, setEditting] = useState(false);
+  const [activeHeader, setActiveHeader] = useState('posts');
 
   const profile = useHttp<ProfileType>();
   const avatar = useHttp<Blob>();
   const posts = useHttp<PostType[]>();
+  const favorites = useHttp<PostType[]>();
 
   useEffect(() => {
     profile.callAPI({ asyncFunction: () => getOneProfile(params.id) });
@@ -88,11 +90,23 @@ const Profile: React.FC = () => {
 
           <PostSection>
             <div className='header'>
-              <H2>POSTS</H2>
+              <H3
+                className={activeHeader === 'posts' ? 'active' : ''}
+                onClick={() => setActiveHeader('posts')}
+              >
+                POSTS
+              </H3>
+              <H3
+                className={activeHeader === 'favorites' ? 'active' : ''}
+                onClick={() => setActiveHeader('favorites')}
+              >
+                FAVORITES
+              </H3>
             </div>
 
             {posts.res?.data.map((post) => (
               <PostCard
+                className='post-card'
                 key={post._id}
                 post={post}
                 variant={user?._id === params.id ? 'mypost' : 'feed'}

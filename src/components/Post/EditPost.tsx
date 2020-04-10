@@ -9,8 +9,9 @@ import { size } from '../AppStyles';
 
 import { Header } from './Post';
 import { UploadImage } from '../NewPost/NewPostStyles';
+import { Container } from '../common/Layout';
 import Button from '../common/Button';
-import { Input, Textarea } from '../common/Input';
+import { Textarea } from '../common/Input';
 
 export interface EditPostProps {
   post: PostType;
@@ -21,7 +22,7 @@ export interface EditPostProps {
 const EditPost: React.FC<EditPostProps> = ({ post, imageURL, setEditting }) => {
   const [file, setFile] = useState<Blob>();
   const editPost = useHttp();
-  let history = useHistory();
+  // let history = useHistory();
 
   const asyncFunction = useCallback(
     async (values) => {
@@ -56,26 +57,28 @@ const EditPost: React.FC<EditPostProps> = ({ post, imageURL, setEditting }) => {
               </Button>
             </Header>
 
-            <Field name='title' className='title' as={Textarea} />
+            <Container size='desktop'>
+              <Field name='title' className='title' as={Textarea} />
 
-            <UploadImage image={file ? URL.createObjectURL(file) : imageURL}>
-              <label htmlFor='input-file' className='img-upload-btn'>
-                <i className='fa fa-cloud-upload fa-2x'></i>
-                <div>UPLOAD IMAGE</div>
-              </label>
-            </UploadImage>
+              <UploadImage image={file ? URL.createObjectURL(file) : imageURL}>
+                <label htmlFor='input-file' className='img-upload-btn'>
+                  <i className='fas fa-upload'></i>
+                  <div>UPLOAD</div>
+                </label>
+              </UploadImage>
 
-            <input
-              id='input-file'
-              type='file'
-              accept='image/*'
-              onChange={(e: any) => {
-                const file = e.target.files[0];
-                setFile(file);
-              }}
-            />
+              <input
+                id='input-file'
+                type='file'
+                accept='image/*'
+                onChange={(e: any) => {
+                  const file = e.target.files[0];
+                  setFile(file);
+                }}
+              />
 
-            <Field name='body' className='body' as={Textarea} />
+              <Field name='body' className='body' as={Textarea} />
+            </Container>
           </Form>
         )}
       </Formik>

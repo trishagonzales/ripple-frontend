@@ -7,8 +7,11 @@ export const Div = styled.div`
     text-align: center;
   }
 
-  h2 {
-    margin-top: 1em;
+  .form-label {
+    margin-top: 60px;
+    font-size: 24px;
+    font-weight: 600;
+    color: darkgrey;
   }
 
   #input-file {
@@ -63,13 +66,13 @@ export const UploadImage = styled.div<{ image: any }>`
 `;
 
 export const Title = styled(Textarea)`
-  height: 140px;
-  font-size: 24px;
+  height: 160px;
+  font-size: 18px;
   font-weight: 600;
   text-transform: uppercase;
 `;
 
 export const Body = styled(Textarea)`
   height: 600px;
-  font-size: 1rem;
+  font-size: 14px;
 `;

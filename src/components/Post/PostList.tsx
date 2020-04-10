@@ -15,7 +15,7 @@ const Div = styled.div`
   grid-template-columns: 1fr;
   justify-items: center;
 
-  @media ${device.tablet} {
+  @media (min-width: 900px) {
     grid-template-columns: repeat(2, 1fr);
   }
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useRouteMatch, useHistory } from 'react-router-dom';
+import { Link, useRouteMatch, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import moment from 'moment';
 import useHttp from '../../hooks/useHttp';
@@ -9,6 +9,7 @@ import { PostType } from '../../types/types';
 import { size } from '../AppStyles';
 
 import EditPost from './EditPost';
+import { Container } from '../common/Layout';
 import { H1, Text } from '../common/Typography';
 import Button from '../common/Button';
 
@@ -17,6 +18,7 @@ const Post: React.FC = () => {
   const { params } = useRouteMatch<{ id: string }>();
   let history = useHistory();
   const [editting, setEditting] = useState(false);
+  const [liked, setLiked] = useState(false);
   const post = useHttp<PostType>();
   const image = useHttp();
   const avatar = useHttp();
@@ -34,10 +36,11 @@ const Post: React.FC = () => {
 
   useEffect(() => {
     if (author?.profile.avatar) avatar.callAPI({ asyncFunction: () => getAvatar(author._id) });
+    if (author && data?.likes.indexOf(author._id) !== -1) setLiked(true);
   }, [author, avatar.callAPI]);
 
   useEffect(() => {
-    if (delPost.res && !delPost.error) history.push('/feed');
+    if (delPost.res) history.push('/feed');
   }, [delPost.res, delPost.error, history]);
 
   return (
@@ -52,31 +55,44 @@ const Post: React.FC = () => {
         <Page>
           {user?._id === author?._id ? (
             <Header>
-              <Button onClick={() => setEditting(true)}>EDIT</Button>
-              <Button
-                onClick={() => delPost.callAPI({ asyncFunction: () => deletePost(params.id) })}
-              >
-                DELETE
-              </Button>
+              <i className='fas fa-arrow-left i-back' onClick={() => history.goBack()} />
+              <div className='buttons'>
+                <Button onClick={() => setEditting(true)}>EDIT</Button>
+                <Button
+                  onClick={() => delPost.callAPI({ asyncFunction: () => deletePost(params.id) })}
+                >
+                  DELETE
+                </Button>
+              </div>
             </Header>
           ) : (
             <Header>
-              <Avatar url={avatar.res && URL.createObjectURL(avatar.res.data)} />
-              <Text>{author?.profile.firstName + ' ' + author?.profile.lastName}</Text>
-              <i className='far fa-heart'></i>
+              <i className='fas fa-arrow-left i-back' onClick={() => history.goBack()} />
+              <Link to={`/profile/${author?._id}`}>
+                <div className='author'>
+                  <Avatar url={avatar.res && URL.createObjectURL(avatar.res.data)} />
+                  <Text>{author?.profile.firstName + ' ' + author?.profile.lastName}</Text>
+                </div>
+              </Link>
+              <i
+                className={`${liked ? 'fas' : 'far'} fa-heart i-heart`}
+                onClick={() => setLiked(!liked)}
+              />
             </Header>
           )}
 
-          <H1>{data?.title}</H1>
+          <Container size='tablet'>
+            <H1 className='title'>{data?.title}</H1>
 
-          <div className='dates'>
-            <Text secondary>Date created: {dateCreated}</Text>
-            {lastModified && <Text secondary>Last modified: {lastModified}</Text>}
-          </div>
+            <div className='dates'>
+              <Text secondary>Date created: {dateCreated}</Text>
+              {lastModified && <Text secondary>Last modified: {lastModified}</Text>}
+            </div>
 
-          <Image url={image.res && URL.createObjectURL(image.res.data)} />
+            <Image url={image.res && URL.createObjectURL(image.res.data)} />
 
-          <Text>{data?.body}</Text>
+            <Text className='body'>{data?.body}</Text>
+          </Container>
         </Page>
       )}
     </>
@@ -92,25 +108,55 @@ export const Page = styled.div`
 
   .dates {
     display: flex;
-    margin-bottom: 2rem;
     p:first-child {
       margin-right: auto;
     }
+  }
+  .body {
+    line-height: 2rem;
   }
 `;
 
 export const Header = styled.div`
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .author {
+    display: flex;
+    align-items: center;
+  }
+
+  i {
+    font-size: 25px;
+    color: #909090;
+    cursor: pointer;
+    :hover {
+      color: #505050;
+    }
+  }
+
   button:first-child {
     margin-left: auto;
   }
 `;
 
-export const Avatar = styled.div<{ url: string | undefined }>``;
+export const Avatar = styled.div<{ url: string | undefined }>`
+  width: 40px;
+  height: 40px;
+  margin-right: 1rem;
+  background: ${(p) => (p.url ? `url(${p.url})` : 'lightgrey')};
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  border-radius: 50%;
+`;
 
 export const Image = styled.div<{ url: string | undefined }>`
   width: 100%;
   height: 300px;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
   background: url(${(p) => p.url});
   background-repeat: no-repeat;
   background-position: center;

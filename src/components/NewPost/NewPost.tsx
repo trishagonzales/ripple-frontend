@@ -1,23 +1,23 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import { useToasts } from 'react-toast-notifications';
 import PulseLoader from 'react-spinners/PulseLoader';
-import useHttp from '../../hooks/useHttp';
 import theme from '../../theme';
+import useHttp from '../../hooks/useHttp';
 import url from '../../api/endpoints.json';
 import http from '../../api/http';
 
 import { Div, UploadImage, Title, Body } from './NewPostStyles';
 import { Container } from '../common/Layout';
-import { H1, H2 } from '../common/Typography';
+import { H1 } from '../common/Typography';
 import Button from '../common/Button';
 
 const NewPost = () => {
   const [{ file, fileURL }, setFile] = useState({ file: '', fileURL: '' });
   const { addToast } = useToasts();
-  let history = useHistory();
   const post = useHttp();
+  let history = useHistory();
 
   const asyncFunction = useCallback(
     async (values) => {
@@ -40,13 +40,17 @@ const NewPost = () => {
         });
 
         addToast('Successfully created new post.', { appearance: 'success' });
-        history.goBack();
+        return postRes;
       } catch (e) {
         throw e;
       }
     },
     [file, addToast]
   );
+
+  useEffect(() => {
+    if (post.res) history.push(`/post/${post.res.data._id}`);
+  }, [post.res, history]);
 
   return (
     <Div>
@@ -60,10 +64,15 @@ const NewPost = () => {
         >
           {() => (
             <Form>
+              <label className='form-label' htmlFor='title'>
+                TITLE
+              </label>
+              <Field name='title' id='title' as={Title} />
+
               <UploadImage image={fileURL}>
                 <label htmlFor='input-file' className='img-upload-btn'>
-                  <i className='fa fa-cloud-upload fa-2x'></i>
-                  <div>UPLOAD IMAGE</div>
+                  <i className='fas fa-upload' />
+                  <div>UPLOAD</div>
                 </label>
               </UploadImage>
 
@@ -73,15 +82,14 @@ const NewPost = () => {
                 accept='image/*'
                 onChange={(e: any) => {
                   const file = e.target.files[0];
-                  setFile({ file, fileURL: URL.createObjectURL(file) });
+                  if (file) setFile({ file, fileURL: URL.createObjectURL(file) });
                 }}
               />
 
-              <H2>TITLE</H2>
-              <Field name='title' as={Title} />
-
-              <H2>BODY</H2>
-              <Field name='body' as={Body} />
+              <label className='form-label' htmlFor='body'>
+                BODY
+              </label>
+              <Field name='body' id='body' as={Body} />
 
               <div className='form-buttons'>
                 <Button type='button' onClick={() => history.goBack()}>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import moment from 'moment';
 import useHttp from '../../hooks/useHttp';
@@ -11,11 +11,12 @@ import Button from '../common/Button';
 import { device } from '../AppStyles';
 
 export interface PostCardProps {
+  className?: string;
   variant: 'feed' | 'mypost';
   post: PostType;
 }
 
-const PostCard: React.FC<PostCardProps> = ({ variant, post }) => {
+const PostCard: React.FC<PostCardProps> = ({ className, variant, post }) => {
   const { _id, title, author, lastModified, dateCreated } = post;
   const date = moment(lastModified ? lastModified : dateCreated).format('l');
 
@@ -23,7 +24,6 @@ const PostCard: React.FC<PostCardProps> = ({ variant, post }) => {
   const [avatarURL, setAvatarURL] = useState('');
   const image = useHttp();
   const avatar = useHttp();
-  let history = useHistory();
 
   useEffect(() => {
     image.callAPI({ asyncFunction: () => getImage(_id) });
@@ -40,27 +40,42 @@ const PostCard: React.FC<PostCardProps> = ({ variant, post }) => {
 
   return (
     <Link to={`/post/${_id}`}>
-      <Card>
+      <Card className={className}>
         <div className='image'>{imageURL && <Image url={imageURL} />}</div>
 
         <div className='title'>
           <Text>{title}</Text>
         </div>
 
-        <div className='avatar'>
-          <Avatar url={avatarURL} />
-        </div>
+        {variant === 'feed' ? (
+          <>
+            <div className='avatar'>
+              <Link to={`/profile/${post.author._id}`}>
+                <Avatar url={avatarURL} />
+              </Link>
+            </div>
 
-        <div className='author'>
-          <Text>{author.profile.firstName + ' ' + author.profile.lastName}</Text>
-        </div>
+            <div className='author'>
+              <Link to={`/profile/${post.author._id}`}>
+                <Text>{author.profile.firstName + ' ' + author.profile.lastName}</Text>
+              </Link>
+            </div>
+          </>
+        ) : null}
 
         <div className='date'>
           <Text secondary>{date}</Text>
         </div>
 
         <div className='buttons'>
-          <Button>READ</Button>
+          {variant === 'feed' ? (
+            <Button>READ</Button>
+          ) : (
+            <>
+              <Button>EDIT</Button>
+              <Button>DELETE</Button>
+            </>
+          )}
         </div>
       </Card>
     </Link>
@@ -70,7 +85,7 @@ const PostCard: React.FC<PostCardProps> = ({ variant, post }) => {
 export default PostCard;
 
 export const Card = styled.div`
-  width: 450px;
+  width: 420px;
   height: auto;
   margin: 1rem;
   padding-bottom: 0.7rem;
@@ -86,6 +101,12 @@ export const Card = styled.div`
   ${(p) => p.theme.boxShadow};
   ${(p) => p.theme.borderRadius};
   background: white;
+  transition: transform ease-out 300ms;
+
+  :hover {
+    box-shadow: 0px 0px 20px lightgrey;
+    transform: translateY(-3px);
+  }
 
   & > div {
     p {

@@ -1,17 +1,15 @@
 import styled from 'styled-components';
 import { size, device } from '../AppStyles';
 
-export const Div = styled.div`
-  margin: 1.3rem;
-`;
+export const Div = styled.div``;
 
 export const ProfileSection = styled.section`
   max-width: ${size.tablet};
   margin: auto;
 
   .header {
-    /* margin: 1em auto 0 auto;
-    padding: 0.5em; */
+    margin-top: 1em;
+    padding: 0.5em;
     display: flex;
     align-items: start;
     button {
@@ -72,13 +70,13 @@ export const ProfileSection = styled.section`
   }
 
   label {
-    font-size: 12px;
+    font-size: 14px;
     color: grey;
   }
 
   .firstName p,
   .lastName p {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
   }
 `;
@@ -88,6 +86,7 @@ export const Avatar = styled.div<{ url: string | null }>`
   height: 100px;
   justify-self: center;
   background: ${(p) => (p.url ? `url(${p.url})` : 'lightgrey')};
+  background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
   border-radius: 50%;
@@ -102,5 +101,18 @@ export const PostSection = styled.section`
     padding: 0.5em;
     display: flex;
     align-items: start;
+    h3 {
+      color: grey;
+      padding: 0.7em;
+      cursor: pointer;
+    }
+    .active {
+      color: ${(p) => p.theme.color.main};
+      border-bottom: 1px solid ${(p) => p.theme.color.main};
+    }
+  }
+
+  .post-card {
+    width: 100%;
   }
 `;

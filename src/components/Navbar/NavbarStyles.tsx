@@ -52,7 +52,7 @@ export const Menu = styled.div<{ open: boolean }>`
     color: ${(p) => p.theme.color.main};
   }
 
-  @media (max-width: 820px) {
+  @media (max-width: 660px) {
     ${(p) => (p.open ? 'display: flex' : 'display: none')};
     flex-direction: column;
     position: fixed;
@@ -90,7 +90,7 @@ export const Burger = styled.div<{ user: any; onClick: any }>`
     border-radius: 20px;
   }
 
-  @media (max-width: 820px) {
+  @media (max-width: 660px) {
     ${(p) => (p.user ? 'display: unset' : 'display: none')};
   }
 `;

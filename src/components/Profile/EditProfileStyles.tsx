@@ -2,9 +2,10 @@ import styled from 'styled-components';
 import { device, size } from '../AppStyles';
 
 export const Div = styled.div`
+  max-width: ${size.tablet};
+  margin: auto;
+
   .header {
-    max-width: ${size.tablet};
-    margin: auto;
     margin-top: 1em;
     padding: 0.5em;
     display: flex;
@@ -44,7 +45,6 @@ export const Div = styled.div`
 
       & > div {
         padding: 1rem;
-
         & > label {
           padding-bottom: 0.5rem;
           font-size: 14px;
@@ -90,6 +90,7 @@ export const Avatar = styled.div<{ url: string | undefined }>`
   margin: auto;
 
   background: ${(p) => (p.url ? `url(${p.url})` : 'lightgrey')};
+  background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
   border-radius: 50%;

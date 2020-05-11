@@ -1,32 +1,61 @@
 import React, { useEffect } from 'react';
+import { Switch, Route, NavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import PulseLoader from 'react-spinners/PulseLoader';
 import useHttp from '../../hooks/useHttp';
-import { getAllPosts } from '../../api/api';
+import { getAllPosts, getLikedPosts } from '../../api/api';
 import { PostType } from '../../types/types';
 
-import { H1 } from '../common/Typography';
-import { HorizontalCenter } from '../common/Layout';
+import { Text } from '../common/Typography';
 import PostList from '../Post/PostList';
 import PostCard from '../Post/PostCard';
+import Loading from '../common/Loading';
 
 const Feed = () => {
-  const { res, loading, callAPI } = useHttp<PostType[]>();
+  const posts = useHttp<PostType[]>();
+  const favorites = useHttp<PostType[]>();
 
   useEffect(() => {
-    callAPI({ asyncFunction: getAllPosts });
-  }, [callAPI]);
+    posts.callAPI({ asyncFunction: getAllPosts });
+    favorites.callAPI({ asyncFunction: getLikedPosts });
+  }, [posts.callAPI, favorites.callAPI]);
+
+  if (posts.loading) return <Loading loading={posts.loading} />;
 
   return (
     <Div>
-      <H1>FEED</H1>
-      <HorizontalCenter>
-        <PulseLoader loading={loading} color={'#D80416'} size={12} />
-      </HorizontalCenter>
+      <div className='header'>
+        <NavLink exact to='/feed' activeClassName='active'>
+          <Text>ALL</Text>
+        </NavLink>
+        <NavLink to='/feed/favorites' activeClassName='active'>
+          <Text>FAVORITES</Text>
+        </NavLink>
+      </div>
 
-      <PostList>
-        {res && res.data.map((post: any) => <PostCard variant='feed' post={post} key={post._id} />)}
-      </PostList>
+      <Switch>
+        <Route
+          exact
+          path='/feed/favorites'
+          render={() => (
+            <PostList>
+              {favorites.res?.data.map((post: any) => (
+                <PostCard variant='feed' post={post} key={post._id} />
+              ))}
+            </PostList>
+          )}
+        />
+        <Route
+          exact
+          path='/feed'
+          render={() => (
+            <PostList>
+              {posts.res?.data.map((post: any) => (
+                <PostCard variant='feed' post={post} key={post._id} />
+              ))}
+            </PostList>
+          )}
+        />
+      </Switch>
     </Div>
   );
 };
@@ -34,7 +63,20 @@ const Feed = () => {
 export default Feed;
 
 const Div = styled.div`
-  h1 {
-    text-align: center;
+  .active {
+    p {
+      color: ${(p) => p.theme.color.main};
+    }
+  }
+
+  .header {
+    margin-top: 1em;
+    display: flex;
+    justify-content: center;
+    p {
+      padding: 0 0.5em;
+      font-size: 20px;
+      font-weight: 600;
+    }
   }
 `;

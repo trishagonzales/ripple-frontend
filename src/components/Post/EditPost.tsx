@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import styled from 'styled-components';
 import useHttp from '../../hooks/useHttp';
@@ -12,6 +11,7 @@ import { UploadImage } from '../NewPost/NewPostStyles';
 import { Container } from '../common/Layout';
 import Button from '../common/Button';
 import { Textarea } from '../common/Input';
+import Loading from '../common/Loading';
 
 export interface EditPostProps {
   post: PostType;
@@ -22,7 +22,6 @@ export interface EditPostProps {
 const EditPost: React.FC<EditPostProps> = ({ post, imageURL, setEditting }) => {
   const [file, setFile] = useState<Blob>();
   const editPost = useHttp();
-  // let history = useHistory();
 
   const asyncFunction = useCallback(
     async (values) => {
@@ -39,6 +38,8 @@ const EditPost: React.FC<EditPostProps> = ({ post, imageURL, setEditting }) => {
   useEffect(() => {
     if (editPost.res && !editPost.error) setEditting(false);
   }, [editPost.res, editPost.error, setEditting]);
+
+  if (editPost.loading) return <Loading loading={editPost.loading} />;
 
   return (
     <EditPage>

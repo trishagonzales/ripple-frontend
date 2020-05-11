@@ -44,7 +44,7 @@ export const Div = styled.div`
       }
 
       & > div {
-        padding: 1rem;
+        padding: 0.7rem;
         & > label {
           padding-bottom: 0.5rem;
           font-size: 14px;

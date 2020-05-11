@@ -19,9 +19,9 @@ export const H1 = styled.h1`
 `;
 
 export const H2 = styled.h2`
-  font-size: 30px;
+  font-size: 26px;
 `;
 
 export const H3 = styled.h3`
-  font-size: 20px;
+  font-size: 18px;
 `;

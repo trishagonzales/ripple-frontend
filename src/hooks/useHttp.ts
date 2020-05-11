@@ -31,7 +31,7 @@ const useHttp = <T = any>() => {
     [onError]
   );
 
-  return { res, loading, error, callAPI };
+  return { res, setRes, loading, error, callAPI };
 };
 
 export default useHttp;

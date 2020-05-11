@@ -2,8 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import { useToasts } from 'react-toast-notifications';
-import PulseLoader from 'react-spinners/PulseLoader';
-import theme from '../../theme';
 import useHttp from '../../hooks/useHttp';
 import url from '../../api/endpoints.json';
 import http from '../../api/http';
@@ -12,6 +10,7 @@ import { Div, UploadImage, Title, Body } from './NewPostStyles';
 import { Container } from '../common/Layout';
 import { H1 } from '../common/Typography';
 import Button from '../common/Button';
+import Loading from '../common/Loading';
 
 const NewPost = () => {
   const [{ file, fileURL }, setFile] = useState({ file: '', fileURL: '' });
@@ -52,16 +51,14 @@ const NewPost = () => {
     if (post.res) history.push(`/post/${post.res.data._id}`);
   }, [post.res, history]);
 
+  if (post.loading) return <Loading loading={post.loading} />;
+
   return (
     <Div>
       <Container size='tablet'>
         <H1>NEW POST</H1>
-        <PulseLoader loading={post.loading} color={theme.color.main} size={12} />
 
-        <Formik
-          initialValues={{ title: '', body: '' }}
-          onSubmit={(values) => post.callAPI({ asyncFunction, values })}
-        >
+        <Formik initialValues={{ title: '', body: '' }} onSubmit={(values) => post.callAPI({ asyncFunction, values })}>
           {() => (
             <Form>
               <label className='form-label' htmlFor='title'>

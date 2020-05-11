@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useRouteMatch, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import moment from 'moment';
 import useHttp from '../../hooks/useHttp';
 import useGlobal from '../../hooks/useGlobal';
-import { getOnePost, getImage, getAvatar, deletePost } from '../../api/api';
+import { getOnePost, getImage, getAvatar, deletePost, likePost, unlikePost } from '../../api/api';
 import { PostType } from '../../types/types';
 import { size } from '../AppStyles';
 
@@ -12,22 +12,35 @@ import EditPost from './EditPost';
 import { Container } from '../common/Layout';
 import { H1, Text } from '../common/Typography';
 import Button from '../common/Button';
+import Loading from '../common/Loading';
 
 const Post: React.FC = () => {
+  const mounted = useRef(false);
   const { user } = useGlobal();
   const { params } = useRouteMatch<{ id: string }>();
-  let history = useHistory();
   const [editting, setEditting] = useState(false);
-  const [liked, setLiked] = useState(false);
+  let history = useHistory();
+
   const post = useHttp<PostType>();
-  const image = useHttp();
+  const image = useHttp<Blob>();
   const avatar = useHttp();
   const delPost = useHttp();
+  const likeAPI = useHttp();
+  const unlikeAPI = useHttp();
 
   const dateCreated = moment(post.res?.data.dateCreated).format('l');
   const lastModified = moment(post.res?.data.lastModified).format('l');
-  const data = post.res?.data;
+  const postData = post.res?.data;
   const author = post.res?.data.author;
+  const [liked, setLiked] = useState(user && postData?.likes.includes(user._id));
+
+  console.log('Mounted: ', mounted.current);
+
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+    }
+  }, []);
 
   useEffect(() => {
     post.callAPI({ asyncFunction: () => getOnePost(params.id) });
@@ -36,18 +49,26 @@ const Post: React.FC = () => {
 
   useEffect(() => {
     if (author?.profile.avatar) avatar.callAPI({ asyncFunction: () => getAvatar(author._id) });
-    if (author && data?.likes.indexOf(author._id) !== -1) setLiked(true);
   }, [author, avatar.callAPI]);
 
   useEffect(() => {
     if (delPost.res) history.push('/feed');
-  }, [delPost.res, delPost.error, history]);
+  }, [delPost.res, history]);
+
+  useEffect(() => {
+    if (mounted) {
+      if (liked) likeAPI.callAPI({ asyncFunction: likePost, values: params.id });
+      if (!liked) unlikeAPI.callAPI({ asyncFunction: unlikePost, values: params.id });
+    }
+  }, [liked, params.id, likeAPI.callAPI, unlikeAPI.callAPI]);
+
+  if (post.loading) return <Loading loading={post.loading} />;
 
   return (
     <>
-      {editting && data ? (
+      {editting && postData ? (
         <EditPost
-          post={data}
+          post={postData}
           imageURL={image.res && URL.createObjectURL(image.res.data)}
           setEditting={setEditting}
         />
@@ -58,11 +79,7 @@ const Post: React.FC = () => {
               <i className='fas fa-arrow-left i-back' onClick={() => history.goBack()} />
               <div className='buttons'>
                 <Button onClick={() => setEditting(true)}>EDIT</Button>
-                <Button
-                  onClick={() => delPost.callAPI({ asyncFunction: () => deletePost(params.id) })}
-                >
-                  DELETE
-                </Button>
+                <Button onClick={() => delPost.callAPI({ asyncFunction: () => deletePost(params.id) })}>DELETE</Button>
               </div>
             </Header>
           ) : (
@@ -74,15 +91,15 @@ const Post: React.FC = () => {
                   <Text>{author?.profile.firstName + ' ' + author?.profile.lastName}</Text>
                 </div>
               </Link>
-              <i
-                className={`${liked ? 'fas' : 'far'} fa-heart i-heart`}
-                onClick={() => setLiked(!liked)}
-              />
+              <span className='likes'>
+                <i className={`${liked ? 'fas' : 'far'} fa-heart i-heart`} onClick={() => setLiked(!liked)} />
+                <Text secondary>{postData?.likes.length}</Text>
+              </span>
             </Header>
           )}
 
           <Container size='tablet'>
-            <H1 className='title'>{data?.title}</H1>
+            <H1 className='title'>{postData?.title}</H1>
 
             <div className='dates'>
               <Text secondary>Date created: {dateCreated}</Text>
@@ -91,7 +108,7 @@ const Post: React.FC = () => {
 
             <Image url={image.res && URL.createObjectURL(image.res.data)} />
 
-            <Text className='body'>{data?.body}</Text>
+            <Text className='body'>{postData?.body}</Text>
           </Container>
         </Page>
       )}
@@ -127,12 +144,14 @@ export const Header = styled.div`
     align-items: center;
   }
 
-  i {
-    font-size: 25px;
-    color: #909090;
-    cursor: pointer;
-    :hover {
-      color: #505050;
+  .likes {
+    i {
+      font-size: 25px;
+      color: #909090;
+      cursor: pointer;
+      :hover {
+        color: #505050;
+      }
     }
   }
 

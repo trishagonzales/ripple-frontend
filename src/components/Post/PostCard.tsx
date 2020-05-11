@@ -8,7 +8,6 @@ import { PostType } from '../../types/types';
 
 import { Text } from '../common/Typography';
 import Button from '../common/Button';
-import { device } from '../AppStyles';
 
 export interface PostCardProps {
   className?: string;
@@ -85,27 +84,25 @@ const PostCard: React.FC<PostCardProps> = ({ className, variant, post }) => {
 export default PostCard;
 
 export const Card = styled.div`
-  width: 420px;
+  width: auto;
   height: auto;
-  margin: 1rem;
-  padding-bottom: 0.7rem;
+  padding-bottom: 0.6rem;
   display: grid;
   grid-template-columns: 60px 1fr 15% 15%;
-  grid-template-rows: 100px auto auto auto;
+  grid-template-rows: 100px 60px auto auto;
   grid-template-areas:
     'img    img    img     img'
     'title  title  title   title'
     'avatar author buttons buttons'
     'avatar date   buttons buttons';
 
-  ${(p) => p.theme.boxShadow};
   ${(p) => p.theme.borderRadius};
   background: white;
   transition: transform ease-out 300ms;
 
   :hover {
-    box-shadow: 0px 0px 20px lightgrey;
-    transform: translateY(-3px);
+    box-shadow: 3px 3px 15px #ddd;
+    transform: translateY(-2px);
   }
 
   & > div {
@@ -117,38 +114,46 @@ export const Card = styled.div`
   .image {
     grid-area: img;
   }
+
   .title {
     grid-area: title;
-    padding: 1rem 1rem;
+    padding: 0.5rem 1rem;
+    overflow-y: hidden;
     p {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: bold;
       line-height: 20px;
     }
+    :hover {
+      text-decoration: underline;
+    }
   }
+
   .avatar {
     grid-area: avatar;
     justify-self: center;
     align-self: center;
-    padding-left: 0.7em;
+    padding-left: 0.6em;
   }
+
   .author {
     grid-area: author;
+    :hover {
+      text-decoration: underline;
+    }
   }
+
   .date {
     grid-area: date;
     p {
       font-size: 13px;
     }
   }
+
   .buttons {
     grid-area: buttons;
     justify-self: end;
-    margin: 0 0.7rem 0 0;
-  }
-
-  @media ${device.tablet} {
-    /* width: 500px; */
+    margin: 0 0.6rem 0 0;
   }
 `;
 

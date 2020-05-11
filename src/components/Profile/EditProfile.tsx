@@ -1,17 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Formik, Form, Field } from 'formik';
-import PulseLoader from 'react-spinners/PulseLoader';
 import useHttp from '../../hooks/useHttp';
 import useGlobal from '../../hooks/useGlobal';
 import { updateProfile, updateAvatar } from '../../api/api';
-import theme from '../../theme';
 import { ProfileType } from '../../types/types';
 
 import { Div, Avatar } from './EditProfileStyles';
-import { Container, HorizontalCenter, Center } from '../common/Layout';
+import { Container, Center } from '../common/Layout';
 import { H2 } from '../common/Typography';
 import { Input, Textarea } from '../common/Input';
 import Button from '../common/Button';
+import Loading from '../common/Loading';
 
 export interface EditProfileProps {
   data: ProfileType | undefined;
@@ -43,16 +42,14 @@ const EditProfile: React.FC<EditProfileProps> = ({ data, avatarURL, setEditting 
     }
   }, [res, error, setEditting, dispatch]);
 
+  if (loading) return <Loading loading={loading} />;
+
   return (
     <Div>
       <div className='header'>
         <H2>PROFILE</H2>
         <Button onClick={() => setEditting(false)}>CANCEL</Button>
       </div>
-
-      <HorizontalCenter>
-        <PulseLoader loading={loading} color={theme.color.main} size={12} />
-      </HorizontalCenter>
 
       <Container className='container' size='tablet'>
         <Formik

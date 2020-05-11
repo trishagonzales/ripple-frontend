@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const Input = styled.input`
-  font-size: 16px;
+  font-size: 14px;
   width: 100%;
   padding: 0.6em;
   margin: 0.2em;
@@ -9,7 +9,7 @@ export const Input = styled.input`
   ${(p) => p.theme.borderRadius}
   transition: border-color ease-in 100ms;
 
-  &:focus {
+  :focus {
     border-color: #777;
     outline: none;
   }

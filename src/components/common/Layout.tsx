@@ -34,8 +34,8 @@ type SizeType = 'phone' | 'tablet' | 'desktop' | 'desktopL';
 
 export const Container = styled.div<{ size?: SizeType }>`
   max-width: ${(p) => (p.size ? size[p.size] : size.phone)};
-  margin: 20px auto 20px auto;
-  padding: 2em;
+  margin: 1rem auto 1rem auto;
+  padding: 2em 1.5em;
   background: white;
   ${(p) => p.theme.boxShadow}
 `;

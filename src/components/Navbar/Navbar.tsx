@@ -1,24 +1,18 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { GlobalContext } from '../../providers';
+import useGlobal from '../../hooks/useGlobal';
 import { deleteJwt } from '../../api/auth';
 
 import { Nav, Div, Menu, Burger } from './NavbarStyles';
 import Button from '../common/Button';
 
 const Navbar = () => {
-  const {
-    global: { user, navMenu },
-    dispatch,
-  } = useContext(GlobalContext);
+  const { user, navMenu, dispatch } = useGlobal();
 
   const menu = user ? (
     <>
       <Menu open={navMenu}>
-        <i
-          className='fa fa-close fa-2x close-btn'
-          onClick={() => dispatch({ type: 'toggle-navmenu' })}
-        ></i>
+        <i className='fas fa-times fa-2x close-btn' onClick={() => dispatch({ type: 'toggle-navmenu' })}></i>
         <NavLink to='/feed'>FEED</NavLink>
         <NavLink to={`/profile/${user._id}`}>PROFILE</NavLink>
         <NavLink to='/settings'>SETTINGS</NavLink>

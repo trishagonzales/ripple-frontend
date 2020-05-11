@@ -3,11 +3,11 @@ import { GlobalContext } from '../providers';
 
 const useGlobal = () => {
   const {
-    global: { user },
-    dispatch
+    global: { user, navMenu },
+    dispatch,
   } = useContext(GlobalContext);
 
-  return { global, user, dispatch };
+  return { global, user, navMenu, dispatch };
 };
 
 export default useGlobal;

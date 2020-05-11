@@ -4,7 +4,7 @@ import { device } from '../AppStyles';
 
 export const Div = styled.div`
   .form-buttons {
-    margin-top: auto;
+    margin-top: 3em;
     display: flex;
 
     button {

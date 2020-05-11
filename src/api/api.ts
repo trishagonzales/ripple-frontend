@@ -16,9 +16,8 @@ interface SignupInput extends LoginInput {
 export const login = (values: LoginInput) => {
   return http({ method: 'POST', url: '/auth', data: values });
 };
-
 export const validatePassword = (password: string) => {
-  return http({ method: 'POST', url: '/users/validate-password', data: password });
+  return http({ method: 'POST', url: '/users/validate-password', data: { password } });
 };
 
 //  USERS
@@ -26,42 +25,32 @@ export const validatePassword = (password: string) => {
 export const signup = (values: SignupInput) => {
   return http({ method: 'POST', url: '/users', data: values });
 };
-
 export const getUserData = () => http('/users/me');
-
 export const updateEmail = (email: string) => {
-  return http({ method: 'PUT', url: '/users/email', data: email });
+  return http({ method: 'PUT', url: '/users/email', data: { email } });
 };
-
 export const updatePassword = (password: string) => {
-  return http({ method: 'PUT', url: '/users/password', data: password });
+  return http({ method: 'PUT', url: '/users/password', data: { password } });
 };
-
 export const deleteUser = () => http({ method: 'DELETE', url: '/users/me' });
 
 //  PROFILES
 
 export const getAllProfiles = () => http('/profiles');
-
 export const getOneProfile = (id: string) => http(`/profiles/${id}`);
-
-export const updateProfile = (profile: ProfileType) =>
-  http({ method: 'PUT', url: '/profiles', data: profile });
+export const updateProfile = (profile: ProfileType) => http({ method: 'PUT', url: '/profiles', data: profile });
 
 //  POSTS
 
 export const getAllPosts = () => http('/posts');
-
 export const getUserPosts = (id: string) => http(`/posts/user/${id}`);
-
 export const getOnePost = (id: string) => http(`/posts/${id}`);
-
-export const createPost = (post: PostType) => http({ method: 'POST', url: '/posts' });
-
-export const updatePost = (id: string, values: any) =>
-  http({ method: 'PUT', url: `/posts/${id}`, data: values });
-
+export const createPost = (post: PostType) => http({ method: 'POST', url: '/posts', data: post });
+export const updatePost = (id: string, values: any) => http({ method: 'PUT', url: `/posts/${id}`, data: values });
 export const deletePost = (id: string) => http({ method: 'DELETE', url: `/posts/${id}` });
+export const getLikedPosts = () => http(`/posts/liked-posts`);
+export const likePost = (id: string) => http({ method: 'PUT', url: `/posts/${id}/likes` });
+export const unlikePost = (id: string) => http({ method: 'PUT', url: `/posts/${id}/unlikes` });
 
 //  UPLOADS
 

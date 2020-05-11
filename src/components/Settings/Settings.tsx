@@ -1,75 +1,129 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import PulseLoader from 'react-spinners/PulseLoader';
-import theme from '../../theme';
 import useHttp from '../../hooks/useHttp';
-import { size } from '../AppStyles';
+import useGlobal from '../../hooks/useGlobal';
+import useFormInput from '../../hooks/useFormInput';
+import useValidatePassword from '../../hooks/useValidatePassword';
+import { updateEmail, updatePassword, deleteUser } from '../../api/api';
 
-import { Container, HorizontalCenter } from '../common/Layout';
-import { Text, H2 } from '../common/Typography';
+import { H2, Text } from '../common/Typography';
 import Button from '../common/Button';
+import { Container } from '../common/Layout';
 import { Input } from '../common/Input';
-import { updateEmail, updatePassword } from '../../api/api';
+import Modal from '../common/Modal';
+import { device, size } from '../AppStyles';
 
-const Settings: React.FC = () => {
-  const [emailEdit, setEmailEdit] = useState(false);
-  const [passwordEdit, setPasswordEdit] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const Settings = () => {
+  const [editting, setEditting] = useState({ email: false, password: false });
+  const { user } = useGlobal();
+  const emailForm = useFormInput();
+  const passwordForm = useFormInput();
+  const validatePassForm = useFormInput();
+  const updateEmailAPI = useHttp();
+  const updatePasswordAPI = useHttp();
+  const deleteUserAPI = useHttp();
+  const validatePass = useValidatePassword();
 
-  const emailAPI = useHttp();
-  const passwordAPI = useHttp();
+  useEffect(() => {
+    if (updateEmailAPI.res) setEditting({ ...editting, email: false });
+  }, [editting, updateEmailAPI.res, setEditting]);
+
+  useEffect(() => {}, []);
+  useEffect(() => {}, []);
 
   return (
     <Div>
       <div className='header'>
-        <H2>Settings</H2>
+        <H2>SETTINGS</H2>
       </div>
 
-      <Container className='container' size='tablet'>
-        <div>
-          <Text>EMAIL</Text>
-          {emailEdit ? (
+      <Container>
+        <div className='field'>
+          <label htmlFor='email'>Email:</label>
+          {editting.email ? (
             <>
-              <Input value={email} onChange={(e) => setEmail(e.target.value)} />
-              <div className='buttons'>
-                <Button onClick={() => setEmailEdit(!emailEdit)}>CANCEL</Button>
-                <Button
-                  onClick={() => emailAPI.callAPI({ asyncFunction: () => updateEmail(email) })}
-                  primary
-                >
-                  SAVE
-                </Button>
-              </div>
+              <Input type='email' {...emailForm} />
+              <Button type='button' onClick={() => setEditting({ ...editting, email: false })}>
+                CANCEL
+              </Button>
+              <Button
+                type='submit'
+                onClick={() =>
+                  validatePass.open({
+                    call: updateEmailAPI.callAPI,
+                    apiFunction: updateEmail,
+                    values: emailForm.value,
+                  })
+                }
+                primary
+              >
+                SAVE
+              </Button>
             </>
           ) : (
-            <Button onClick={() => setEmailEdit(!emailEdit)}>EDIT</Button>
-          )}
-        </div>
-        <div>
-          <Text>PASSWORD</Text>
-          {passwordEdit ? (
             <>
-              <Input value={password} onChange={(e) => setPassword(e.target.value)} />
-              <div className='buttons'>
-                <Button onClick={() => setPasswordEdit(!passwordEdit)}>CANCEL</Button>
-                <Button
-                  onClick={() =>
-                    passwordAPI.callAPI({ asyncFunction: () => updatePassword(password) })
-                  }
-                  primary
-                >
-                  SAVE
-                </Button>
-              </div>
+              <Text>{user?.email}</Text>
+              <Button onClick={() => setEditting({ ...editting, email: true })}>EDIT</Button>
             </>
-          ) : (
-            <Button onClick={() => setPasswordEdit(!passwordEdit)}>EDIT</Button>
           )}
         </div>
 
-        <Button primary>DELETE ACCOUNT</Button>
+        <div className='field'>
+          <label htmlFor='password'>Password:</label>
+          {editting.password ? (
+            <>
+              <Input type='password' {...passwordForm} />
+              <Button type='button' onClick={() => setEditting({ ...editting, password: false })}>
+                CANCEL
+              </Button>
+              <Button
+                type='submit'
+                onClick={() =>
+                  validatePass.open({
+                    call: updatePasswordAPI.callAPI,
+                    apiFunction: updatePassword,
+                    values: passwordForm.value,
+                  })
+                }
+                primary
+              >
+                SAVE
+              </Button>
+            </>
+          ) : (
+            <>
+              <Text></Text>
+              <Button onClick={() => setEditting({ ...editting, password: true })}>EDIT</Button>
+            </>
+          )}
+        </div>
+
+        <Button
+          className='btn-delete-account'
+          onClick={() =>
+            validatePass.open({
+              call: deleteUserAPI.callAPI,
+              apiFunction: deleteUser,
+            })
+          }
+        >
+          DELETE ACCOUNT
+        </Button>
       </Container>
+
+      <Modal toggle={validatePass.isOpen}>
+        <Text>Validate password</Text>
+        <Input type='password' {...validatePassForm} />
+        <div className='buttons'>
+          <Button type='button' onClick={validatePass.close}>
+            CANCEL
+          </Button>
+          <Button type='submit' onClick={() => validatePass.validate(validatePassForm.value)} primary>
+            SUBMIT
+          </Button>
+        </div>
+      </Modal>
     </Div>
   );
 };
@@ -77,14 +131,50 @@ const Settings: React.FC = () => {
 export default Settings;
 
 export const Div = styled.div`
-  max-width: ${size.tablet};
+  max-width: ${size.phone};
   margin: auto;
 
-  .container {
-    & > div {
-      margin: 1em;
+  .header {
+    margin-top: 0.8rem;
+  }
+
+  .field {
+    margin: 1em 0;
+    display: flex;
+    flex-direction: column;
+
+    label {
+      flex: 1;
+      font-size: 14px;
+      color: lightgrey;
+    }
+    input,
+    p {
+      flex: 3;
+    }
+    .buttons {
       display: flex;
+    }
+  }
+
+  .btn-delete-account {
+    width: 100%;
+    margin-top: 10%;
+  }
+
+  @media ${device.phoneL} {
+    .field {
+      flex-direction: row;
       justify-content: space-between;
+      align-items: center;
+
+      .buttons {
+        margin-left: 0.4em;
+      }
+    }
+
+    .btn-delete-account {
+      width: unset;
     }
   }
 `;

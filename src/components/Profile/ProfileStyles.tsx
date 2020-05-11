@@ -1,8 +1,6 @@
 import styled from 'styled-components';
 import { size, device } from '../AppStyles';
 
-export const Div = styled.div``;
-
 export const ProfileSection = styled.section`
   max-width: ${size.tablet};
   margin: auto;
@@ -40,7 +38,7 @@ export const ProfileSection = styled.section`
     }
 
     & > div {
-      padding: 1em;
+      padding: 0.7em;
     }
 
     .firstName {

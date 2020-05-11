@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { device } from '../AppStyles';
 
 export interface PostListProps {}
 
@@ -11,15 +10,12 @@ const PostList: React.FC<PostListProps> = ({ children }) => {
 export default PostList;
 
 const Div = styled.div`
+  max-width: 1900px;
+  width: auto;
+  padding: 1rem;
   display: grid;
-  grid-template-columns: 1fr;
-  justify-items: center;
-
-  @media (min-width: 900px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (min-width: 1200px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-rows: auto;
+  justify-content: center;
+  grid-gap: 1rem;
 `;

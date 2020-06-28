@@ -27,8 +27,6 @@ const EditProfile: React.FC<EditProfileProps> = ({ profile, avatar, setEdit }) =
 
   const asyncFunction = useCallback(
     async values => {
-      console.log('File: ', file);
-      console.log('Avatar: ', avatar);
       await updateProfile(values);
       if (file && file !== avatar) await updateAvatar(file);
       history.go(0);

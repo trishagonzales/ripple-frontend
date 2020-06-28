@@ -8,13 +8,9 @@ const Footer: React.FC = () => {
       <div className='content'>
         <p className='copyright'>&copy; 2020 Ripple. All rights reserved.</p>
         <span className='divider'></span>
-        <a href='#' className='terms'>
-          Terms
-        </a>
+        <span className='terms'>Terms</span>
         <span className='divider'></span>
-        <a href='#' className='privacy-policy'>
-          Privacy Policy
-        </a>
+        <span className='privacy-policy'>Privacy Policy</span>
       </div>
     </FooterStyle>
   );
@@ -45,10 +41,12 @@ export const FooterStyle = styled.footer`
       background: #444;
     }
 
-    a {
+    .terms,
+    .privacy-policy {
       color: var(--fg2);
       :hover {
         text-decoration: underline;
+        cursor: pointer;
       }
     }
   }

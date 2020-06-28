@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { device, size } from '../AppStyles';
+import { device, size } from '../GlobalStyle';
 
 export const HorizontalSplit = styled.div`
   width: 100%;
@@ -27,15 +27,19 @@ export const HorizontalCenter = styled.div`
 `;
 
 export const Grid = styled.div<{ name: string }>`
-  grid-area: ${(p) => p.name};
+  grid-area: ${p => p.name};
 `;
 
 type SizeType = 'phone' | 'tablet' | 'desktop' | 'desktopL';
 
 export const Container = styled.div<{ size?: SizeType }>`
-  max-width: ${(p) => (p.size ? size[p.size] : size.phone)};
-  margin: 1rem auto 1rem auto;
-  padding: 2em 1.5em;
+  max-width: ${p => (p.size ? size[p.size] : size.tablet)};
+  margin: auto;
+  padding: 3.5em 5%;
   background: white;
-  ${(p) => p.theme.boxShadow}
+  border-radius: var(--borderRadius);
+  box-shadow: var(--boxShadow);
+  @media (max-width: ${size.phone}) {
+    padding: 2.5em 5%;
+  }
 `;

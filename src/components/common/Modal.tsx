@@ -2,11 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 
 export interface ModalProps {
-  toggle: boolean;
+  isOpen: boolean;
 }
 
-const Modal: React.FC<ModalProps> = ({ children, toggle = false }) => {
-  if (!toggle) return null;
+const Modal: React.FC<ModalProps> = ({ children, isOpen = false }) => {
+  if (!isOpen) return null;
 
   return (
     <Div>
@@ -38,7 +38,7 @@ export const Box = styled.div`
   justify-content: space-between;
 
   background: white;
-  ${(p) => p.theme.borderRadius};
+  border-radius: var(--borderRadius);
 
   .buttons {
     margin-left: auto;

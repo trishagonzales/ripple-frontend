@@ -1,104 +1,106 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import styled from 'styled-components';
+import { useToasts } from 'react-toast-notifications';
 import useHttp from '../../hooks/useHttp';
+import useUpload from '../../hooks/useUpload';
 import { updatePost, updateImage } from '../../api/api';
-import { PostType } from '../../types/types';
-import { size } from '../AppStyles';
+import { PostType } from '../../types';
 
-import { Header } from './Post';
-import { UploadImage } from '../NewPost/NewPostStyles';
+import { H2 } from '../common/Typography';
+import { Textarea, ImageUpload } from '../common/Input';
 import { Container } from '../common/Layout';
-import Button from '../common/Button';
-import { Textarea } from '../common/Input';
+import { Button } from '../common/Button';
 import Loading from '../common/Loading';
+import { size } from '../GlobalStyle';
 
-export interface EditPostProps {
+interface EditPostProps {
   post: PostType;
-  imageURL: string | undefined;
-  setEditting: React.Dispatch<boolean>;
+  image?: Blob;
+  setEdit: React.Dispatch<boolean>;
 }
 
-const EditPost: React.FC<EditPostProps> = ({ post, imageURL, setEditting }) => {
-  const [file, setFile] = useState<Blob>();
-  const editPost = useHttp();
+const EditPost: React.FC<EditPostProps> = ({ post, image, setEdit }) => {
+  const { Upload, file } = useUpload(ImageUpload, image);
+  const updatePostAPI = useHttp();
+  const { addToast } = useToasts();
+  let history = useHistory();
 
   const asyncFunction = useCallback(
-    async (values) => {
-      try {
-        await updatePost(post._id, values);
-        if (file) await updateImage(post._id, file);
-      } catch (e) {
-        throw e;
-      }
+    async values => {
+      await updatePost(post._id, values);
+      if (file && file !== image) await updateImage(post._id, file);
+      addToast('Successfully updated post', { appearance: 'success' });
+      history.push(`/post/${post._id}`);
     },
-    [post._id, file]
+    [file, image, post._id, addToast, history]
   );
 
-  useEffect(() => {
-    if (editPost.res && !editPost.error) setEditting(false);
-  }, [editPost.res, editPost.error, setEditting]);
-
-  if (editPost.loading) return <Loading loading={editPost.loading} />;
+  if (updatePostAPI.loading) return <Loading loading={updatePostAPI.loading} />;
 
   return (
-    <EditPage>
+    <PostForm>
       <Formik
         initialValues={{ title: post.title, body: post.body }}
-        onSubmit={(values) => editPost.callAPI({ asyncFunction, values })}
-      >
+        onSubmit={values => updatePostAPI.callAPI({ asyncFunction, values })}>
         {() => (
           <Form>
-            <Header>
-              <Button type='button' onClick={() => setEditting(false)}>
+            <div className='header'>
+              <Button type='button' onClick={() => setEdit(false)}>
                 CANCEL
               </Button>
-              <Button type='submit' primary>
-                SAVE
-              </Button>
-            </Header>
+              <H2>EDIT</H2>
+              <Button primary>SAVE</Button>
+            </div>
 
-            <Container size='desktop'>
-              <Field name='title' className='title' as={Textarea} />
+            <Container className='container'>
+              <label htmlFor='title'>TITLE</label>
+              <Field name='title' id='title' as={Textarea} />
 
-              <UploadImage image={file ? URL.createObjectURL(file) : imageURL}>
-                <label htmlFor='input-file' className='img-upload-btn'>
-                  <i className='fas fa-upload'></i>
-                  <div>UPLOAD</div>
-                </label>
-              </UploadImage>
+              <Upload iconSize='25px' />
 
-              <input
-                id='input-file'
-                type='file'
-                accept='image/*'
-                onChange={(e: any) => {
-                  const file = e.target.files[0];
-                  setFile(file);
-                }}
-              />
-
-              <Field name='body' className='body' as={Textarea} />
+              <label htmlFor='body'>BODY</label>
+              <Field name='body' id='body' as={Textarea} />
             </Container>
           </Form>
         )}
       </Formik>
-    </EditPage>
+    </PostForm>
   );
 };
 
 export default EditPost;
 
-export const EditPage = styled.div`
+export const PostForm = styled.div`
   max-width: ${size.tablet};
   margin: auto;
-  padding: 1em;
 
-  #input-file {
-    display: none;
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
-  .body {
-    height: 600px;
+  .container {
+    & > label {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--fg2);
+    }
+
+    textarea {
+      margin-top: 0.7rem;
+    }
+
+    #title {
+      height: 150px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    #body {
+      height: 600px;
+    }
   }
 `;

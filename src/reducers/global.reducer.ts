@@ -1,4 +1,4 @@
-import { User } from '../types/types';
+import { User } from '../types';
 
 export interface GlobalState {
   user: null | User;
@@ -6,7 +6,7 @@ export interface GlobalState {
 }
 
 export interface GlobalStateActions {
-  type: 'toggle-navmenu' | 'login' | 'logout' | 'get-user-data';
+  type: 'toggle-navmenu' | 'login' | 'logout' | 'get-user-data' | 'update-email';
   payload?: any;
 }
 
@@ -15,25 +15,34 @@ export default function globalReducer(state: GlobalState, action: GlobalStateAct
     case 'toggle-navmenu':
       return {
         ...state,
-        navMenu: !state.navMenu
+        navMenu: !state.navMenu,
       };
 
     case 'login':
       return {
         ...state,
-        user: action.payload
+        user: action.payload,
       };
 
     case 'logout':
       return {
         ...state,
-        user: null
+        user: null,
       };
 
     case 'get-user-data':
       return {
         ...state,
-        user: action.payload
+        user: action.payload,
+      };
+
+    case 'update-email':
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          email: action.payload,
+        },
       };
 
     default:

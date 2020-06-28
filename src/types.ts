@@ -21,15 +21,17 @@ export interface PostType {
   image?: string;
   title: string;
   body: string;
-  author: {
-    _id: string;
-    profile: {
-      firstName: string;
-      lastName: string;
-      avatar?: Blob | string;
-    };
-  };
+  author: AuthorType;
   dateCreated: string;
   lastModified?: string;
   likes: string[];
+}
+
+export interface AuthorType {
+  _id: string;
+  profile: {
+    firstName: string;
+    lastName: string;
+    avatar?: Blob | string;
+  };
 }

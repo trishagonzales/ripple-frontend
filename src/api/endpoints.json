@@ -1,8 +1,0 @@
-{
-  "auth": "/auth",
-  "users": "/users",
-  "profiles": "/profiles",
-  "posts": "/posts",
-  "image": "/uploads/image",
-  "avatar": "/uploads/avatar"
-}

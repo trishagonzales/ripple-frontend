@@ -3,14 +3,19 @@ import styled from 'styled-components';
 export interface TextProps {
   secondary?: boolean;
   error?: boolean;
+  size?: string;
 }
 
 export const Text = styled.p<TextProps>`
-  font-size: ${(p) => (p.error ? '12px' : '14px')};
-  color: ${(p) => {
-    if (p.secondary) return p.theme.color.fg2;
+  font-size: ${p => {
+    if (p.size) return p.size;
+    if (p.error) return '12px';
+    return '14px';
+  }};
+  color: ${p => {
+    if (p.secondary) return 'var(--fg2)';
     if (p.error) return 'red';
-    return p.theme.color.fg;
+    return 'var(--fg)';
   }};
 `;
 

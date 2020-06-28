@@ -15,8 +15,7 @@ ReactDOM.render(
         placement='top-center'
         autoDismiss={true}
         autoDismissTimeout={4000}
-        transitionDuration={100}
-      >
+        transitionDuration={100}>
         <App />
       </ToastProvider>
     </ThemeProvider>

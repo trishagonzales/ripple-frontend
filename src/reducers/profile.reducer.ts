@@ -1,4 +1,4 @@
-import { ProfileType } from '../types/types';
+import { ProfileType } from '../types';
 
 export interface ProfileState {
   profile: ProfileType | undefined;
@@ -17,18 +17,18 @@ export default function profileReducer(state: ProfileState, action: ProfileActio
     case 'set-profile':
       return {
         ...state,
-        profile: action.profile
+        profile: action.profile,
       };
 
     case 'set-editting':
       return {
         ...state,
-        editting: !state.editting
+        editting: !state.editting,
       };
     case 'set-fileURL':
       return {
         ...state,
-        fileURL: action.fileURL
+        fileURL: action.fileURL,
       };
   }
 }

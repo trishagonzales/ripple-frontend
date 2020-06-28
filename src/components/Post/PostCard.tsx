@@ -1,177 +1,141 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useRef } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import moment from 'moment';
 import useHttp from '../../hooks/useHttp';
-import { getImage, getAvatar } from '../../api/api';
-import { PostType } from '../../types/types';
+import useGlobal from '../../hooks/useGlobal';
+import { getImage, deletePost } from '../../api/api';
+import { PostType } from '../../types';
 
+import Author from '../common/Author';
 import { Text } from '../common/Typography';
-import Button from '../common/Button';
+import { Button, ButtonLink } from '../common/Button';
 
 export interface PostCardProps {
   className?: string;
-  variant: 'feed' | 'mypost';
   post: PostType;
 }
 
-const PostCard: React.FC<PostCardProps> = ({ className, variant, post }) => {
-  const { _id, title, author, lastModified, dateCreated } = post;
-  const date = moment(lastModified ? lastModified : dateCreated).format('l');
+const PostCard: React.FC<PostCardProps> = ({ className, post }) => {
+  const { user } = useGlobal();
+  const date = useRef(moment(post.dateCreated).format('l'));
+  const variant = post.author._id === user?._id ? 'mypost' : 'feed';
 
-  const [imageURL, setImageURL] = useState('');
-  const [avatarURL, setAvatarURL] = useState('');
-  const image = useHttp();
-  const avatar = useHttp();
-
-  useEffect(() => {
-    image.callAPI({ asyncFunction: () => getImage(_id) });
-  }, [_id, image.callAPI]);
+  const imageAPI = useHttp();
+  const deletePostAPI = useHttp();
+  let history = useHistory();
 
   useEffect(() => {
-    avatar.callAPI({ asyncFunction: () => getAvatar(author._id) });
-  }, [author._id, avatar.callAPI]);
+    if (post.image) imageAPI.callAPI({ asyncFunction: getImage, values: post._id });
+  }, [post._id, imageAPI.callAPI]);
 
   useEffect(() => {
-    if (image.res) setImageURL(URL.createObjectURL(image.res.data));
-    if (avatar.res) setAvatarURL(URL.createObjectURL(avatar.res.data));
-  }, [image.res, avatar.res]);
+    if (deletePostAPI.res) history.go(0);
+  }, [deletePostAPI.res, history]);
 
   return (
-    <Link to={`/post/${_id}`}>
-      <Card className={className}>
-        <div className='image'>{imageURL && <Image url={imageURL} />}</div>
-
-        <div className='title'>
-          <Text>{title}</Text>
-        </div>
-
-        {variant === 'feed' ? (
-          <>
-            <div className='avatar'>
-              <Link to={`/profile/${post.author._id}`}>
-                <Avatar url={avatarURL} />
-              </Link>
-            </div>
-
-            <div className='author'>
-              <Link to={`/profile/${post.author._id}`}>
-                <Text>{author.profile.firstName + ' ' + author.profile.lastName}</Text>
-              </Link>
-            </div>
-          </>
-        ) : null}
-
-        <div className='date'>
-          <Text secondary>{date}</Text>
-        </div>
-
-        <div className='buttons'>
-          {variant === 'feed' ? (
-            <Button>READ</Button>
-          ) : (
-            <>
-              <Button>EDIT</Button>
-              <Button>DELETE</Button>
-            </>
+    <Card className={className} variant={variant}>
+      <Link to={`/post/${post._id}`}>
+        <div className='image-container'>
+          {post.image && (
+            <img
+              className='image'
+              src={imageAPI.res && URL.createObjectURL(imageAPI.res.data)}
+              alt=''
+            />
           )}
         </div>
-      </Card>
-    </Link>
+
+        <Text className='title'>{post.title}</Text>
+      </Link>
+
+      <div className='details'>
+        <Text secondary>{date.current}</Text>
+        <Text secondary>{post.likes.length} likes</Text>
+      </div>
+
+      <div className='links'>
+        {variant !== 'mypost' && (
+          <>
+            <Author author={post.author} />
+            <Button onClick={() => history.push(`/post/${post._id}`)}>READ</Button>
+          </>
+        )}
+        {variant === 'mypost' && (
+          <>
+            <ButtonLink to={`/edit-post/${post._id}`}>EDIT</ButtonLink>
+            <Button
+              onClick={() =>
+                deletePostAPI.callAPI({ asyncFunction: deletePost, values: post._id })
+              }>
+              DELETE
+            </Button>
+          </>
+        )}
+      </div>
+    </Card>
   );
 };
 
 export default PostCard;
 
-export const Card = styled.div`
+type Variant = 'feed' | 'mypost';
+
+export const Card = styled.div<{ variant: Variant }>`
   width: auto;
   height: auto;
-  padding-bottom: 0.6rem;
-  display: grid;
-  grid-template-columns: 60px 1fr 15% 15%;
-  grid-template-rows: 100px 60px auto auto;
-  grid-template-areas:
-    'img    img    img     img'
-    'title  title  title   title'
-    'avatar author buttons buttons'
-    'avatar date   buttons buttons';
-
-  ${(p) => p.theme.borderRadius};
   background: white;
-  transition: transform ease-out 300ms;
-
+  box-shadow: var(--boxShadow);
+  ${p => p.theme.mixins.transition('box-shadow')};
+  cursor: pointer;
   :hover {
-    box-shadow: 3px 3px 15px #ddd;
-    transform: translateY(-2px);
+    box-shadow: 0px 0px 12px #e8e8e8;
+    .image {
+      transform: scale(1.04);
+    }
+    .title {
+      color: var(--fg);
+    }
   }
 
-  & > div {
-    p {
-      font-size: 14px;
-    }
+  .image-container {
+    height: 100px;
+    overflow: hidden;
   }
 
   .image {
-    grid-area: img;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: var(--transitionAll);
   }
 
   .title {
-    grid-area: title;
-    padding: 0.5rem 1rem;
+    height: 47px;
+    margin: 0.4em 1em;
     overflow-y: hidden;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 24px;
+    color: var(--fg2);
+    transition: var(--transitionAll);
+  }
+
+  .details {
+    margin: 0 1em 0.5em 1em;
+    display: flex;
     p {
-      font-size: 16px;
-      font-weight: bold;
-      line-height: 20px;
-    }
-    :hover {
-      text-decoration: underline;
+      margin-right: 1.5em;
+      font-size: 12px;
     }
   }
 
-  .avatar {
-    grid-area: avatar;
-    justify-self: center;
-    align-self: center;
-    padding-left: 0.6em;
+  .links {
+    margin: 0 1em 0.7em 1em;
+    display: flex;
+    justify-content: space-between;
+    ${p => p.variant === 'mypost' && 'justify-content: flex-end'};
+    align-items: center;
   }
-
-  .author {
-    grid-area: author;
-    :hover {
-      text-decoration: underline;
-    }
-  }
-
-  .date {
-    grid-area: date;
-    p {
-      font-size: 13px;
-    }
-  }
-
-  .buttons {
-    grid-area: buttons;
-    justify-self: end;
-    margin: 0 0.6rem 0 0;
-  }
-`;
-
-export const Image = styled.div<{ url: string }>`
-  width: 100%;
-  height: 100%;
-  background: url(${(p) => p.url});
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-`;
-
-export const Avatar = styled.div<{ url: string }>`
-  width: 40px;
-  height: 40px;
-  background: ${(p) => (p.url ? `url(${p.url})` : 'lightgrey')};
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  border-radius: 50%;
 `;

@@ -1,116 +1,90 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useRouteMatch, useHistory } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
-import moment from 'moment';
 import useHttp from '../../hooks/useHttp';
 import useGlobal from '../../hooks/useGlobal';
-import { getOnePost, getImage, getAvatar, deletePost, likePost, unlikePost } from '../../api/api';
-import { PostType } from '../../types/types';
-import { size } from '../AppStyles';
+import usePostData from '../../hooks/usePostData';
+import { getOnePost, getImage, deletePost } from '../../api/api';
+import { PostType } from '../../types';
 
 import EditPost from './EditPost';
-import { Container } from '../common/Layout';
 import { H1, Text } from '../common/Typography';
-import Button from '../common/Button';
+import { Container } from '../common/Layout';
+import { Button, BackButton } from '../common/Button';
 import Loading from '../common/Loading';
+import Like from '../common/Like';
+import Author from '../common/Author';
+import { size } from '../GlobalStyle';
 
-const Post: React.FC = () => {
-  const mounted = useRef(false);
+interface PostProps {
+  editting?: boolean;
+}
+
+const Post: React.FC<PostProps> = ({ editting }) => {
   const { user } = useGlobal();
   const { params } = useRouteMatch<{ id: string }>();
-  const [editting, setEditting] = useState(false);
+  const { post, author, date, postBody, setPost } = usePostData();
+  const [onEdit, setEdit] = useState(editting);
+  const postAPI = useHttp<PostType>();
+  const imageAPI = useHttp<Blob>();
+  const deletePostAPI = useHttp();
   let history = useHistory();
 
-  const post = useHttp<PostType>();
-  const image = useHttp<Blob>();
-  const avatar = useHttp();
-  const delPost = useHttp();
-  const likeAPI = useHttp();
-  const unlikeAPI = useHttp();
-
-  const dateCreated = moment(post.res?.data.dateCreated).format('l');
-  const lastModified = moment(post.res?.data.lastModified).format('l');
-  const postData = post.res?.data;
-  const author = post.res?.data.author;
-  const [liked, setLiked] = useState(user && postData?.likes.includes(user._id));
-
-  console.log('Mounted: ', mounted.current);
+  useEffect(() => {
+    postAPI.callAPI({ asyncFunction: getOnePost, values: params.id });
+  }, [postAPI.callAPI, params.id]);
 
   useEffect(() => {
-    if (!mounted.current) {
-      mounted.current = true;
-    }
-  }, []);
+    if (postAPI.res) setPost(postAPI.res.data);
+  }, [postAPI.res, setPost]);
 
   useEffect(() => {
-    post.callAPI({ asyncFunction: () => getOnePost(params.id) });
-    image.callAPI({ asyncFunction: () => getImage(params.id) });
-  }, [params.id, post.callAPI, image.callAPI]);
+    if (post?.image) imageAPI.callAPI({ asyncFunction: getImage, values: post._id });
+  }, [post, imageAPI.callAPI]);
 
   useEffect(() => {
-    if (author?.profile.avatar) avatar.callAPI({ asyncFunction: () => getAvatar(author._id) });
-  }, [author, avatar.callAPI]);
+    if (deletePostAPI.res) history.go(0);
+  }, [deletePostAPI.res, history]);
 
-  useEffect(() => {
-    if (delPost.res) history.push('/feed');
-  }, [delPost.res, history]);
-
-  useEffect(() => {
-    if (mounted) {
-      if (liked) likeAPI.callAPI({ asyncFunction: likePost, values: params.id });
-      if (!liked) unlikeAPI.callAPI({ asyncFunction: unlikePost, values: params.id });
-    }
-  }, [liked, params.id, likeAPI.callAPI, unlikeAPI.callAPI]);
-
-  if (post.loading) return <Loading loading={post.loading} />;
+  if (postAPI.loading) return <Loading loading={postAPI.loading} />;
 
   return (
     <>
-      {editting && postData ? (
-        <EditPost
-          post={postData}
-          imageURL={image.res && URL.createObjectURL(image.res.data)}
-          setEditting={setEditting}
-        />
+      {onEdit && post ? (
+        <EditPost post={post} image={imageAPI.res?.data} setEdit={setEdit} />
       ) : (
-        <Page>
-          {user?._id === author?._id ? (
-            <Header>
-              <i className='fas fa-arrow-left i-back' onClick={() => history.goBack()} />
+        <Div>
+          <div className='header'>
+            <BackButton />
+            {user?._id === author?._id ? (
               <div className='buttons'>
-                <Button onClick={() => setEditting(true)}>EDIT</Button>
-                <Button onClick={() => delPost.callAPI({ asyncFunction: () => deletePost(params.id) })}>DELETE</Button>
+                <Button onClick={() => setEdit(true)}>EDIT</Button>
+                <Button
+                  onClick={() =>
+                    deletePostAPI.callAPI({ asyncFunction: deletePost, values: params.id })
+                  }>
+                  DELETE
+                </Button>
               </div>
-            </Header>
-          ) : (
-            <Header>
-              <i className='fas fa-arrow-left i-back' onClick={() => history.goBack()} />
-              <Link to={`/profile/${author?._id}`}>
-                <div className='author'>
-                  <Avatar url={avatar.res && URL.createObjectURL(avatar.res.data)} />
-                  <Text>{author?.profile.firstName + ' ' + author?.profile.lastName}</Text>
-                </div>
-              </Link>
-              <span className='likes'>
-                <i className={`${liked ? 'fas' : 'far'} fa-heart i-heart`} onClick={() => setLiked(!liked)} />
-                <Text secondary>{postData?.likes.length}</Text>
-              </span>
-            </Header>
-          )}
+            ) : (
+              <Like post={post} />
+            )}
+          </div>
 
-          <Container size='tablet'>
-            <H1 className='title'>{postData?.title}</H1>
+          <Container className='container'>
+            <H1 className='title'>{post?.title}</H1>
 
-            <div className='dates'>
-              <Text secondary>Date created: {dateCreated}</Text>
-              {lastModified && <Text secondary>Last modified: {lastModified}</Text>}
+            <div className='post-info'>
+              <Author author={author} />
+              <Text className='date'>{date}</Text>
+              <Text className='like-count'>{post?.likes.length} likes</Text>
             </div>
 
-            <Image url={image.res && URL.createObjectURL(image.res.data)} />
+            {imageAPI.res && <Image src={imageAPI.res && URL.createObjectURL(imageAPI.res.data)} />}
 
-            <Text className='body'>{postData?.body}</Text>
+            <p className='body' dangerouslySetInnerHTML={{ __html: postBody }}></p>
           </Container>
-        </Page>
+        </Div>
       )}
     </>
   );
@@ -118,66 +92,41 @@ const Post: React.FC = () => {
 
 export default Post;
 
-export const Page = styled.div`
-  max-width: ${size.tablet};
-  margin: auto;
-  padding: 1em;
-
-  .dates {
+export const Div = styled.div`
+  .header {
+    max-width: ${size.tablet};
     display: flex;
-    p:first-child {
-      margin-right: auto;
-    }
-  }
-  .body {
-    line-height: 2rem;
-  }
-`;
-
-export const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  .author {
-    display: flex;
+    justify-content: space-between;
     align-items: center;
-  }
-
-  .likes {
-    i {
-      font-size: 25px;
-      color: #909090;
-      cursor: pointer;
-      :hover {
-        color: #505050;
-      }
+    .buttons {
+      display: flex;
     }
   }
 
-  button:first-child {
-    margin-left: auto;
+  .post-info {
+    margin: 2em 0;
+    display: flex;
+    color: var(--fg2);
+    .date {
+      margin-left: auto;
+      margin-right: 2em;
+    }
+  }
+
+  .body {
+    margin-top: 1.5rem;
+    line-height: 2.5em;
+    font-size: 14px;
   }
 `;
 
-export const Avatar = styled.div<{ url: string | undefined }>`
-  width: 40px;
-  height: 40px;
-  margin-right: 1rem;
-  background: ${(p) => (p.url ? `url(${p.url})` : 'lightgrey')};
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  border-radius: 50%;
-`;
-
-export const Image = styled.div<{ url: string | undefined }>`
+export const Image = styled.img`
   width: 100%;
-  height: 300px;
-  margin-top: 2rem;
-  margin-bottom: 2rem;
-  background: url(${(p) => p.url});
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
+  height: 250px;
+  margin: 1.5em 0;
+  object-fit: contain;
+  object-position: center;
+  @media (max-width: ${size.phone}) {
+    margin: 0;
+  }
 `;

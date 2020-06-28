@@ -6,17 +6,17 @@ import useHttp from '../hooks/useHttp';
 import { getUserData } from '../api/api';
 import { getJwt } from '../api/auth';
 
-import { GlobalStyle } from './AppStyles';
-import Navbar from './Navbar/Navbar';
-import Login from './Auth/Login';
-import Signup from './Auth/Signup';
-import Home from './Home/Home';
-import Feed from './Feed/Feed';
-import NewPost from './NewPost/NewPost';
+import { GlobalStyle } from './GlobalStyle';
+import Navbar from './Navbar';
+import { Login, Signup } from './Auth';
+import Home from './Home';
+import Feed from './Feed';
 import Post from './Post/Post';
-import Profile from './Profile/Profile';
-import EditProfile from './Profile/EditProfile';
-import Settings from './Settings/Settings';
+import NewPost from './Post/NewPost';
+import Profile from './Profile';
+import EditProfile from './EditProfile';
+import Settings from './Settings';
+import Footer from './Footer';
 
 function App(): null | JSX.Element {
   const [global, dispatch] = useReducer(globalReducer, initialGlobal);
@@ -40,6 +40,7 @@ function App(): null | JSX.Element {
           <Route path='/profile/:id' component={Profile} />
           <Route path='/edit-profile' component={EditProfile} />
           <Route path='/post/:id' component={Post} />
+          <Route path='/edit-post/:id' render={props => <Post editting={true} {...props} />} />
           <Route path='/feed' component={Feed} />
           <Route path='/new-post' component={NewPost} />
           <Route path='/' exact component={Home} />
@@ -54,6 +55,7 @@ function App(): null | JSX.Element {
           <Route path='/' exact component={Home} />
         </Switch>
       )}
+      <Footer />
     </GlobalProvider>
   );
 }

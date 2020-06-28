@@ -3,15 +3,24 @@ export type ThemeType = typeof theme;
 const theme = {
   color: {
     main: '#D80416',
-    fg: '#271919',
-    fg2: '#a3a3a3',
-    bg: '#FFFFFF',
-    bg2: '#f0f0f0'
+    fg: '#333',
+    fg2: '#666',
+    bg: '#FFF',
+    bg2: '#f0f0f0',
   },
 
-  boxShadow: 'box-shadow: 0px 0px 6px lightgrey',
+  boxShadow: '1px 1px 15px #ccc',
+  boxShadowThin: '0px 0px 8px lightgrey',
+  borderRadius: '5px',
+  transitionAll: 'all ease-out 200ms',
 
-  borderRadius: 'border-radius: 4px'
+  mixins: {
+    transition: (transitionProperties: string) => `
+      transition-property: ${transitionProperties};
+      transition-duration: 200ms;
+      transition-timing-function: ease-out;
+    `,
+  },
 };
 
 export default theme;

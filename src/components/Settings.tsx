@@ -6,7 +6,7 @@ import useHttp from '../hooks/useHttp';
 import useGlobal from '../hooks/useGlobal';
 import useFormInput from '../hooks/useFormInput';
 import useValidatePassword from '../hooks/useValidatePassword';
-import { updateEmail, updatePassword, deleteAccount } from '../api/api';
+import { sendValidateEmailLink, updateEmail, updatePassword, deleteAccount } from '../api/api';
 import { deleteJwt } from '../api/auth';
 
 import { H2, Text } from './common/Typography';
@@ -23,6 +23,7 @@ const Settings = () => {
   const { addToast } = useToasts();
   let history = useHistory();
 
+  const sendValidateEmailAPI = useHttp();
   const updateEmailAPI = useHttp();
   const updatePasswordAPI = useHttp();
   const deleteAccountAPI = useHttp();
@@ -33,8 +34,7 @@ const Settings = () => {
 
   // When password is validated
   useEffect(() => {
-    if (validationForEmail.isValid)
-      updateEmailAPI.callAPI({ asyncFunction: updateEmail, values: emailForm.value });
+    if (validationForEmail.isValid) updateEmailAPI.callAPI({ asyncFunction: updateEmail, values: emailForm.value });
   }, [validationForEmail.isValid, emailForm.value, updateEmailAPI.callAPI]);
 
   useEffect(() => {
@@ -43,11 +43,14 @@ const Settings = () => {
   }, [validationForPassword.isValid, passwordForm.value, updatePasswordAPI.callAPI]);
 
   useEffect(() => {
-    if (validationForDeleteAccount.isValid)
-      deleteAccountAPI.callAPI({ asyncFunction: deleteAccount });
+    if (validationForDeleteAccount.isValid) deleteAccountAPI.callAPI({ asyncFunction: deleteAccount });
   }, [validationForDeleteAccount.isValid, deleteAccountAPI.callAPI]);
 
   // When API call response arrived
+  useEffect(() => {
+    if (sendValidateEmailAPI.res) addToast(sendValidateEmailAPI.res.data, { appearance: 'success' });
+  }, [sendValidateEmailAPI.res]);
+
   useEffect(() => {
     if (updateEmailAPI.res) {
       validationForEmail.close();
@@ -105,6 +108,25 @@ const Settings = () => {
               <Button onClick={() => setEditting({ ...editting, email: true })}>EDIT</Button>
             </>
           )}
+        </div>
+
+        <div className='field email-validated'>
+          <label></label>
+          <p>
+            Validated
+            {user?.emailValidated ? (
+              <i className='fas fa-check-circle'></i>
+            ) : (
+              <>
+                <i className='fas fa-times-circle'></i>
+                <span
+                  className='send-link'
+                  onClick={() => sendValidateEmailAPI.callAPI({ asyncFunction: sendValidateEmailLink })}>
+                  send confirmation link
+                </span>
+              </>
+            )}
+          </p>
         </div>
 
         <div className='field'>
@@ -176,6 +198,27 @@ export const Div = styled.div`
     p {
       flex: 1;
       margin: 1em 0;
+    }
+  }
+
+  .email-validated {
+    p {
+      font-size: 12px;
+      color: var(--fg2);
+    }
+    i {
+      margin: 0 0.7em;
+      color: green;
+    }
+    .fa-times-circle {
+      color: red;
+    }
+    .send-link {
+      color: dodgerblue;
+      cursor: pointer;
+      :hover {
+        text-decoration: underline;
+      }
     }
   }
 

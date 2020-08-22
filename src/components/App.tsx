@@ -17,6 +17,7 @@ import Profile from './Profile';
 import EditProfile from './EditProfile';
 import Settings from './Settings';
 import Footer from './Footer';
+import { ForgotPassword, ResetPassword } from './Password';
 
 function App(): null | JSX.Element {
   const [global, dispatch] = useReducer(globalReducer, initialGlobal);
@@ -40,7 +41,7 @@ function App(): null | JSX.Element {
           <Route path='/profile/:id' component={Profile} />
           <Route path='/edit-profile' component={EditProfile} />
           <Route path='/post/:id' component={Post} />
-          <Route path='/edit-post/:id' render={props => <Post editting={true} {...props} />} />
+          <Route path='/edit-post/:id' render={(props) => <Post editting={true} {...props} />} />
           <Route path='/feed' component={Feed} />
           <Route path='/new-post' component={NewPost} />
           <Route path='/' exact component={Home} />
@@ -50,6 +51,8 @@ function App(): null | JSX.Element {
           <Route path='/post/:id' component={Post} />
           <Route path='/profile/:id' component={Profile} />
           <Route path='/feed' component={Feed} />
+          <Route path='/reset-password/:token' component={ResetPassword} />
+          <Route path='/forgot-password' component={ForgotPassword} />
           <Route path='/login' component={Login} />
           <Route path='/signup' component={Signup} />
           <Route path='/' exact component={Home} />

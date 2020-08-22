@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { Center } from '../components/common/Layout';
 
@@ -16,12 +16,7 @@ const wrapper = ({ Component, file, setFile }: WrapperProps) =>
   React.memo(({ iconSize = '18px' }: ComponentProps) => {
     return (
       <Div iconSize={iconSize}>
-        <input
-          id='input'
-          type='file'
-          accept='image/*'
-          onChange={(e: any) => setFile(e.target.files[0])}
-        />
+        <input id='input' type='file' accept='image/*' onChange={(e: any) => setFile(e.target.files[0])} />
 
         <label htmlFor='input' className='upload'>
           <Component url={file && URL.createObjectURL(file)}>
@@ -61,7 +56,7 @@ export const Div = styled.div<{ iconSize: string }>`
 
     .icon {
       padding: 0.2em 0.5em;
-      font-size: ${p => p.iconSize};
+      font-size: ${(p) => p.iconSize};
       color: grey;
       background: #ddd;
       border-radius: 10px;

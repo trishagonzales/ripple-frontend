@@ -1,9 +1,10 @@
-export interface User {
+export interface User extends ProfileType {
   _id: string;
   email: string;
-  profile: ProfileType;
+  emailValidated: boolean;
   posts?: PostType[];
   likedPosts?: PostType[];
+  createdAt: Date;
 }
 
 export interface ProfileType {
@@ -23,15 +24,12 @@ export interface PostType {
   body: string;
   author: AuthorType;
   dateCreated: string;
-  lastModified?: string;
   likes: string[];
 }
 
 export interface AuthorType {
   _id: string;
-  profile: {
-    firstName: string;
-    lastName: string;
-    avatar?: Blob | string;
-  };
+  firstName: string;
+  lastName: string;
+  avatar?: Blob | string;
 }

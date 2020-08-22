@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import useHttp from '../../hooks/useHttp';
@@ -13,16 +13,11 @@ export interface AuthorProps {
   className?: string;
 }
 
-const Author: React.FC<AuthorProps> = ({
-  author,
-  imgSize = '30px',
-  textSize = '14px',
-  className = 'author',
-}) => {
+const Author: React.FC<AuthorProps> = ({ author, imgSize = '30px', textSize = '14px', className = 'author' }) => {
   const avatarAPI = useHttp<Blob>();
 
   useEffect(() => {
-    if (author?.profile.avatar) avatarAPI.callAPI({ asyncFunction: getAvatar, values: author._id });
+    if (author?.avatar) avatarAPI.callAPI({ asyncFunction: getAvatar, values: author._id });
   }, [author, avatarAPI.callAPI]);
 
   return (
@@ -31,11 +26,9 @@ const Author: React.FC<AuthorProps> = ({
         {avatarAPI.res ? (
           <img src={URL.createObjectURL(avatarAPI.res.data)} alt='author' />
         ) : (
-          <div className='no-avatar'>{author?.profile.firstName[0]}</div>
+          <div className='no-avatar'>{author?.firstName[0]}</div>
         )}
-        <Text className='name'>
-          {author && author.profile.firstName + ' ' + author.profile.lastName}
-        </Text>
+        <Text className='name'>{author && author.firstName + ' ' + author.lastName}</Text>
       </Div>
     </Link>
   );
@@ -53,16 +46,16 @@ export const Div = styled.div<{ imgSize: string; textSize: string }>`
   }
 
   img {
-    width: ${p => p.imgSize};
-    height: ${p => p.imgSize};
+    width: ${(p) => p.imgSize};
+    height: ${(p) => p.imgSize};
     border-radius: 50%;
     object-fit: cover;
     object-position: center;
   }
 
   .no-avatar {
-    width: ${p => p.imgSize};
-    height: ${p => p.imgSize};
+    width: ${(p) => p.imgSize};
+    height: ${(p) => p.imgSize};
     display: flex;
     justify-content: center;
     align-items: center;
@@ -74,6 +67,6 @@ export const Div = styled.div<{ imgSize: string; textSize: string }>`
 
   .name {
     margin-left: 0.4em;
-    font-size: ${p => p.textSize};
+    font-size: ${(p) => p.textSize};
   }
 `;

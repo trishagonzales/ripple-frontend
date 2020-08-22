@@ -41,7 +41,7 @@ export function Login() {
         validationSchema={loginSchema}
         validateOnBlur={false}
         validateOnChange={false}
-        onSubmit={values => loginAPI.callAPI({ asyncFunction: login, values })}>
+        onSubmit={(values) => loginAPI.callAPI({ asyncFunction: login, values })}>
         {() => (
           <Form>
             <Div>
@@ -50,14 +50,18 @@ export function Login() {
               <div className='field'>
                 <label htmlFor=''>Email</label>
                 <Field name='email' as={Input} />
-                <ErrorMessage name='email' render={e => <Text error>{e}</Text>} />
+                <ErrorMessage name='email' render={(e) => <Text error>{e}</Text>} />
               </div>
 
               <div className='field'>
                 <label htmlFor=''>Password</label>
                 <Field name='password' type='password' as={Input} />
-                <ErrorMessage name='password' render={e => <Text error>{e}</Text>} />
+                <ErrorMessage name='password' render={(e) => <Text error>{e}</Text>} />
               </div>
+
+              <p className='forgot-password'>
+                Forgot password? <Link to='/forgot-password'>reset</Link>
+              </p>
 
               <p className='login-here'>
                 Don't have an account yet? <Link to='/signup'>Signup here</Link>
@@ -106,7 +110,7 @@ export function Signup() {
         validationSchema={signupSchema}
         validateOnBlur={false}
         validateOnChange={false}
-        onSubmit={values => signupAPI.callAPI({ asyncFunction: signup, values })}>
+        onSubmit={(values) => signupAPI.callAPI({ asyncFunction: signup, values })}>
         {() => (
           <Form>
             <Div>
@@ -115,25 +119,25 @@ export function Signup() {
               <div className='field'>
                 <label htmlFor='firstName'>First Name</label>
                 <Field name='firstName' id='firstName' as={Input} />
-                <ErrorMessage name='firstName' render={e => <Text error>{e}</Text>} />
+                <ErrorMessage name='firstName' render={(e) => <Text error>{e}</Text>} />
               </div>
 
               <div className='field'>
                 <label htmlFor='lastName'>Last Name</label>
                 <Field name='lastName' id='lastName' as={Input} />
-                <ErrorMessage name='lastName' render={e => <Text error>{e}</Text>} />
+                <ErrorMessage name='lastName' render={(e) => <Text error>{e}</Text>} />
               </div>
 
               <div className='field'>
                 <label htmlFor='email'>Email</label>
                 <Field name='email' id='email' as={Input} />
-                <ErrorMessage name='email' render={e => <Text error>{e}</Text>} />
+                <ErrorMessage name='email' render={(e) => <Text error>{e}</Text>} />
               </div>
 
               <div className='field'>
                 <label htmlFor='password'>Password</label>
                 <Field name='password' id='password' type='password' as={Input} />
-                <ErrorMessage name='password' render={e => <Text error>{e}</Text>} />
+                <ErrorMessage name='password' render={(e) => <Text error>{e}</Text>} />
               </div>
 
               <p className='login-here'>
@@ -174,6 +178,7 @@ export const Div = styled.div`
     }
   }
 
+  .forgot-password,
   .login-here {
     margin-top: 2rem;
     font-size: 12px;
